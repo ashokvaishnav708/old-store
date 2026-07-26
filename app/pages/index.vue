@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import type { ListingPage } from '#shared/types/models';
-
-const { t } = useI18n();
-const { data: categories } = useCategories();
-const { data: listingsPage } = await useFetch<ListingPage>('/api/listings', {
-  key: 'home-listings',
-  query: { sort: 'newest', pageSize: 12 }
-});
-</script>
-
 <template>
   <div>
     <UPageHero
@@ -57,3 +46,14 @@ const { data: listingsPage } = await useFetch<ListingPage>('/api/listings', {
     </UPageSection>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListingPage } from '#shared/types/models';
+
+const { t } = useI18n();
+const { data: categories } = useCategories();
+const { data: listingsPage } = await useFetch<ListingPage>('/api/listings', {
+  key: 'home-listings',
+  query: { sort: 'newest', pageSize: 12 }
+});
+</script>

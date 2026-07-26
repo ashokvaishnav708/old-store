@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import type { ListingSummary } from '#shared/types/models';
-
-defineProps<{ listing: ListingSummary }>();
-</script>
-
 <template>
   <NuxtLink :to="`/listings/${listing.id}`" class="group block">
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="overflow-hidden h-full">
@@ -33,3 +27,9 @@ defineProps<{ listing: ListingSummary }>();
     </UCard>
   </NuxtLink>
 </template>
+
+<script setup lang="ts">
+import type { ListingSummary } from '#shared/types/models';
+
+defineProps<{ listing: ListingSummary }>();
+</script>

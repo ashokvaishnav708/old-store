@@ -1,38 +1,3 @@
-<script setup lang="ts">
-import type { MessageItem } from '#shared/types/models';
-
-definePageMeta({ middleware: 'auth' });
-
-const { t } = useI18n();
-const route = useRoute();
-const { user } = useUserSession();
-
-const { data: messages, refresh } = await useFetch<MessageItem[]>(
-  `/api/conversations/${route.params.id}/messages`
-);
-
-const draft = ref('');
-const sending = ref(false);
-
-async function send() {
-  if (!draft.value.trim()) return;
-  sending.value = true;
-  try {
-    await $fetch(`/api/conversations/${route.params.id}/messages`, {
-      method: 'POST',
-      body: { body: draft.value }
-    });
-    draft.value = '';
-    await refresh();
-  } finally {
-    sending.value = false;
-  }
-}
-
-const { pause } = useIntervalFn(() => refresh(), 5000);
-onUnmounted(() => pause());
-</script>
-
 <template>
   <UContainer class="py-8 max-w-2xl">
     <UButton
@@ -74,3 +39,38 @@ onUnmounted(() => pause());
     </form>
   </UContainer>
 </template>
+
+<script setup lang="ts">
+import type { MessageItem } from '#shared/types/models';
+
+definePageMeta({ middleware: 'auth' });
+
+const { t } = useI18n();
+const route = useRoute();
+const { user } = useUserSession();
+
+const { data: messages, refresh } = await useFetch<MessageItem[]>(
+  `/api/conversations/${route.params.id}/messages`
+);
+
+const draft = ref('');
+const sending = ref(false);
+
+async function send() {
+  if (!draft.value.trim()) return;
+  sending.value = true;
+  try {
+    await $fetch(`/api/conversations/${route.params.id}/messages`, {
+      method: 'POST',
+      body: { body: draft.value }
+    });
+    draft.value = '';
+    await refresh();
+  } finally {
+    sending.value = false;
+  }
+}
+
+const { pause } = useIntervalFn(() => refresh(), 5000);
+onUnmounted(() => pause());
+</script>

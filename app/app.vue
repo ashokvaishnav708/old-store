@@ -1,49 +1,3 @@
-<script setup lang="ts">
-const { t, locale } = useI18n();
-
-useHead({
-  meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
-  link: [{ rel: 'icon', href: '/favicon.ico' }],
-  htmlAttrs: {
-    lang: locale
-  }
-});
-
-useSeoMeta({
-  title: `${t('app.name')} — Buy & sell locally`,
-  description: t('app.description'),
-  ogTitle: t('app.name'),
-  twitterCard: 'summary_large_image'
-});
-
-const { loggedIn, user, clear } = useUserSession();
-const router = useRouter();
-
-const accountItems = computed(() => [
-  [
-    { label: t('nav.my_listings'), icon: 'i-lucide-list', to: '/account/listings' },
-    { label: t('nav.favorites'), icon: 'i-lucide-heart', to: '/account/favorites' },
-    { label: t('nav.messages'), icon: 'i-lucide-message-circle', to: '/account/messages' }
-  ],
-  [
-    {
-      label: t('nav.sign_out'),
-      icon: 'i-lucide-log-out',
-      onSelect: async () => {
-        await $fetch('/api/auth/logout', { method: 'POST' });
-        await clear();
-        router.push('/');
-      }
-    }
-  ]
-]);
-
-const search = ref('');
-function submitSearch() {
-  router.push({ path: '/search', query: search.value ? { q: search.value } : {} });
-}
-</script>
-
 <template>
   <UApp>
     <UHeader>
@@ -95,3 +49,49 @@ function submitSearch() {
     </UFooter>
   </UApp>
 </template>
+
+<script setup lang="ts">
+const { t, locale } = useI18n();
+
+useHead({
+  meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+  link: [{ rel: 'icon', href: '/favicon.ico' }],
+  htmlAttrs: {
+    lang: locale
+  }
+});
+
+useSeoMeta({
+  title: `${t('app.name')} — Buy & sell locally`,
+  description: t('app.description'),
+  ogTitle: t('app.name'),
+  twitterCard: 'summary_large_image'
+});
+
+const { loggedIn, user, clear } = useUserSession();
+const router = useRouter();
+
+const accountItems = computed(() => [
+  [
+    { label: t('nav.my_listings'), icon: 'i-lucide-list', to: '/account/listings' },
+    { label: t('nav.favorites'), icon: 'i-lucide-heart', to: '/account/favorites' },
+    { label: t('nav.messages'), icon: 'i-lucide-message-circle', to: '/account/messages' }
+  ],
+  [
+    {
+      label: t('nav.sign_out'),
+      icon: 'i-lucide-log-out',
+      onSelect: async () => {
+        await $fetch('/api/auth/logout', { method: 'POST' });
+        await clear();
+        router.push('/');
+      }
+    }
+  ]
+]);
+
+const search = ref('');
+function submitSearch() {
+  router.push({ path: '/search', query: search.value ? { q: search.value } : {} });
+}
+</script>

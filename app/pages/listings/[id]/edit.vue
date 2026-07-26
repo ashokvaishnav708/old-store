@@ -1,3 +1,77 @@
+<template>
+  <UContainer v-if="listing" class="py-8 max-w-2xl">
+    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('listing.edit_listing') }}</h1>
+
+    <div v-if="listing.images.length" class="grid grid-cols-4 gap-2 mb-6">
+      <div
+        v-for="image in listing.images"
+        :key="image.id"
+        class="relative aspect-square rounded-md overflow-hidden group"
+      >
+        <img :src="image.url" class="w-full h-full object-cover" />
+        <UButton
+          icon="i-lucide-x"
+          size="xs"
+          color="error"
+          variant="solid"
+          class="absolute top-1 right-1 opacity-0 group-hover:opacity-100"
+          :loading="deletingImage === image.id"
+          @click="removeImage(image.id)"
+        />
+      </div>
+    </div>
+
+    <UForm :schema="listingUpdateSchema" :state="state" class="space-y-4" @submit="onSubmit">
+      <UFormField :label="t('listing.title_label')" name="title" required>
+        <UInput v-model="state.title" class="w-full" />
+      </UFormField>
+
+      <UFormField :label="t('listing.category_label')" name="categoryId" required>
+        <USelect v-model="state.categoryId" :items="categoryOptions" class="w-full" />
+      </UFormField>
+
+      <UFormField :label="t('listing.status_label')" name="status" required>
+        <USelect v-model="state.status" :items="statusOptions" class="w-full" />
+      </UFormField>
+
+      <UFormField :label="t('listing.condition_label')" name="condition" required>
+        <USelect v-model="state.condition" :items="conditionOptions" class="w-full" />
+      </UFormField>
+
+      <div class="grid grid-cols-2 gap-4">
+        <UFormField :label="t('listing.price_label')" name="price" required>
+          <UInputNumber v-model="state.price" :min="0" class="w-full" />
+        </UFormField>
+        <UFormField :label="t('listing.currency_label')" name="currency">
+          <UInput v-model="state.currency" maxlength="3" class="w-full uppercase" />
+        </UFormField>
+      </div>
+
+      <UFormField :label="t('listing.location_label')" name="location">
+        <UInput v-model="state.location" class="w-full" />
+      </UFormField>
+
+      <UFormField :label="t('listing.description_label')" name="description" required>
+        <UTextarea v-model="state.description" :rows="6" class="w-full" />
+      </UFormField>
+
+      <UFormField :label="t('listing.add_photos_label')" name="images">
+        <UFileUpload
+          v-model="newImages"
+          multiple
+          accept="image/*"
+          :label="t('listing.drop_files')"
+          :description="t('listing.browse_files')"
+        />
+      </UFormField>
+
+      <UButton type="submit" block size="lg" :loading="submitting">
+        {{ t('listing.save_changes') }}
+      </UButton>
+    </UForm>
+  </UContainer>
+</template>
+
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { listingUpdateSchema, type ListingUpdateInput } from '#shared/utils/schemas';
@@ -83,77 +157,3 @@ async function onSubmit(event: FormSubmitEvent<ListingUpdateInput>) {
   }
 }
 </script>
-
-<template>
-  <UContainer v-if="listing" class="py-8 max-w-2xl">
-    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('listing.edit_listing') }}</h1>
-
-    <div v-if="listing.images.length" class="grid grid-cols-4 gap-2 mb-6">
-      <div
-        v-for="image in listing.images"
-        :key="image.id"
-        class="relative aspect-square rounded-md overflow-hidden group"
-      >
-        <img :src="image.url" class="w-full h-full object-cover" />
-        <UButton
-          icon="i-lucide-x"
-          size="xs"
-          color="error"
-          variant="solid"
-          class="absolute top-1 right-1 opacity-0 group-hover:opacity-100"
-          :loading="deletingImage === image.id"
-          @click="removeImage(image.id)"
-        />
-      </div>
-    </div>
-
-    <UForm :schema="listingUpdateSchema" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormField :label="t('listing.title_label')" name="title" required>
-        <UInput v-model="state.title" class="w-full" />
-      </UFormField>
-
-      <UFormField :label="t('listing.category_label')" name="categoryId" required>
-        <USelect v-model="state.categoryId" :items="categoryOptions" class="w-full" />
-      </UFormField>
-
-      <UFormField :label="t('listing.status_label')" name="status" required>
-        <USelect v-model="state.status" :items="statusOptions" class="w-full" />
-      </UFormField>
-
-      <UFormField :label="t('listing.condition_label')" name="condition" required>
-        <USelect v-model="state.condition" :items="conditionOptions" class="w-full" />
-      </UFormField>
-
-      <div class="grid grid-cols-2 gap-4">
-        <UFormField :label="t('listing.price_label')" name="price" required>
-          <UInputNumber v-model="state.price" :min="0" class="w-full" />
-        </UFormField>
-        <UFormField :label="t('listing.currency_label')" name="currency">
-          <UInput v-model="state.currency" maxlength="3" class="w-full uppercase" />
-        </UFormField>
-      </div>
-
-      <UFormField :label="t('listing.location_label')" name="location">
-        <UInput v-model="state.location" class="w-full" />
-      </UFormField>
-
-      <UFormField :label="t('listing.description_label')" name="description" required>
-        <UTextarea v-model="state.description" :rows="6" class="w-full" />
-      </UFormField>
-
-      <UFormField :label="t('listing.add_photos_label')" name="images">
-        <UFileUpload
-          v-model="newImages"
-          multiple
-          accept="image/*"
-          :label="t('listing.drop_files')"
-          :description="t('listing.browse_files')"
-        />
-      </UFormField>
-
-      <UButton type="submit" block size="lg" :loading="submitting">
-        {{ t('listing.save_changes') }}
-      </UButton>
-    </UForm>
-  </UContainer>
-</template>

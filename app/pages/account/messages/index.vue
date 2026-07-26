@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import type { ConversationSummary } from '#shared/types/models';
-
-definePageMeta({ middleware: 'auth' });
-
-const { t } = useI18n();
-const { data: conversations } = await useFetch<ConversationSummary[]>('/api/conversations');
-</script>
-
 <template>
   <UContainer class="py-8">
     <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('account.messages_title') }}</h1>
@@ -42,3 +33,12 @@ const { data: conversations } = await useFetch<ConversationSummary[]>('/api/conv
     </div>
   </UContainer>
 </template>
+
+<script setup lang="ts">
+import type { ConversationSummary } from '#shared/types/models';
+
+definePageMeta({ middleware: 'auth' });
+
+const { t } = useI18n();
+const { data: conversations } = await useFetch<ConversationSummary[]>('/api/conversations');
+</script>

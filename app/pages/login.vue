@@ -1,3 +1,22 @@
+<template>
+  <UContainer class="min-h-[80vh] flex items-center justify-center">
+    <UAuthForm
+      :schema="loginSchema"
+      :fields="fields"
+      :title="t('auth.login_title')"
+      :description="t('auth.login_description', { name: t('app.name') })"
+      icon="i-lucide-store"
+      :submit="{ label: t('auth.sign_in_label'), loading: submitting }"
+      @submit="onSubmit"
+    >
+      <template #description>
+        {{ t('auth.sign_up_prompt') }}
+        <ULink to="/register" class="text-primary font-medium">{{ t('auth.sign_up_link') }}</ULink>
+      </template>
+    </UAuthForm>
+  </UContainer>
+</template>
+
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { loginSchema, type LoginInput } from '#shared/utils/schemas';
@@ -43,22 +62,3 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
   }
 }
 </script>
-
-<template>
-  <UContainer class="min-h-[80vh] flex items-center justify-center">
-    <UAuthForm
-      :schema="loginSchema"
-      :fields="fields"
-      :title="t('auth.login_title')"
-      :description="t('auth.login_description', { name: t('app.name') })"
-      icon="i-lucide-store"
-      :submit="{ label: t('auth.sign_in_label'), loading: submitting }"
-      @submit="onSubmit"
-    >
-      <template #description>
-        {{ t('auth.sign_up_prompt') }}
-        <ULink to="/register" class="text-primary font-medium">{{ t('auth.sign_up_link') }}</ULink>
-      </template>
-    </UAuthForm>
-  </UContainer>
-</template>

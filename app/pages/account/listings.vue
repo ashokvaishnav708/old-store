@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import type { MyListing } from '#shared/types/models';
-
-definePageMeta({ middleware: 'auth' });
-
-const { t } = useI18n();
-const toast = useToast();
-const { data: listings, refresh } = await useFetch<MyListing[]>('/api/listings/mine');
-
-const statusColors: Record<string, 'success' | 'neutral' | 'warning'> = {
-  active: 'success',
-  sold: 'neutral',
-  archived: 'warning',
-  draft: 'neutral'
-};
-
-async function deleteListing(id: string) {
-  const url: string = `/api/listings/${id}`;
-  await $fetch(url, { method: 'DELETE' });
-  toast.add({ title: t('listing.delete_success'), color: 'success' });
-  refresh();
-}
-</script>
-
 <template>
   <UContainer class="py-8">
     <div class="flex items-center justify-between mb-6">
@@ -79,3 +55,27 @@ async function deleteListing(id: string) {
     </div>
   </UContainer>
 </template>
+
+<script setup lang="ts">
+import type { MyListing } from '#shared/types/models';
+
+definePageMeta({ middleware: 'auth' });
+
+const { t } = useI18n();
+const toast = useToast();
+const { data: listings, refresh } = await useFetch<MyListing[]>('/api/listings/mine');
+
+const statusColors: Record<string, 'success' | 'neutral' | 'warning'> = {
+  active: 'success',
+  sold: 'neutral',
+  archived: 'warning',
+  draft: 'neutral'
+};
+
+async function deleteListing(id: string) {
+  const url: string = `/api/listings/${id}`;
+  await $fetch(url, { method: 'DELETE' });
+  toast.add({ title: t('listing.delete_success'), color: 'success' });
+  refresh();
+}
+</script>

@@ -1,3 +1,74 @@
+<template>
+  <UContainer class="py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
+      <aside class="space-y-4">
+        <UInput v-model="filters.q" icon="i-lucide-search" :placeholder="t('search.keyword')" />
+        <USelect
+          v-model="filters.categoryId"
+          :items="categoryOptions"
+          :placeholder="t('search.category')"
+          class="w-full"
+        />
+        <USelect
+          v-model="filters.condition"
+          :items="conditionOptions"
+          :placeholder="t('search.condition')"
+          class="w-full"
+        />
+        <div class="flex gap-2">
+          <UInputNumber
+            v-model="filters.minPrice"
+            :placeholder="t('search.min_price')"
+            class="w-full"
+          />
+          <UInputNumber
+            v-model="filters.maxPrice"
+            :placeholder="t('search.max_price')"
+            class="w-full"
+          />
+        </div>
+        <UInput
+          v-model="filters.location"
+          icon="i-lucide-map-pin"
+          :placeholder="t('search.location')"
+        />
+      </aside>
+
+      <section class="space-y-6">
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-muted">
+            {{ t('search.results', { count: listingsPage?.total ?? 0 }) }}
+          </p>
+          <USelect v-model="filters.sort" :items="sortOptions" class="w-48" />
+        </div>
+
+        <div v-if="status === 'pending'" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <USkeleton v-for="i in 6" :key="i" class="h-56 w-full" />
+        </div>
+
+        <div v-else-if="listingsPage?.items.length" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <ListingCard v-for="listing in listingsPage.items" :key="listing.id" :listing="listing" />
+        </div>
+
+        <UEmpty
+          v-else
+          icon="i-lucide-search-x"
+          :title="t('search.no_results_title')"
+          :description="t('search.no_results_description')"
+        />
+
+        <div v-if="listingsPage && listingsPage.totalPages > 1" class="flex justify-center">
+          <UPagination
+            v-model:page="filters.page"
+            :total="listingsPage.total"
+            :items-per-page="listingsPage.pageSize"
+          />
+        </div>
+      </section>
+    </div>
+  </UContainer>
+</template>
+
 <script setup lang="ts">
 import type { ListingPage } from '#shared/types/models';
 
@@ -75,74 +146,3 @@ watch(
   }
 );
 </script>
-
-<template>
-  <UContainer class="py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
-      <aside class="space-y-4">
-        <UInput v-model="filters.q" icon="i-lucide-search" :placeholder="t('search.keyword')" />
-        <USelect
-          v-model="filters.categoryId"
-          :items="categoryOptions"
-          :placeholder="t('search.category')"
-          class="w-full"
-        />
-        <USelect
-          v-model="filters.condition"
-          :items="conditionOptions"
-          :placeholder="t('search.condition')"
-          class="w-full"
-        />
-        <div class="flex gap-2">
-          <UInputNumber
-            v-model="filters.minPrice"
-            :placeholder="t('search.min_price')"
-            class="w-full"
-          />
-          <UInputNumber
-            v-model="filters.maxPrice"
-            :placeholder="t('search.max_price')"
-            class="w-full"
-          />
-        </div>
-        <UInput
-          v-model="filters.location"
-          icon="i-lucide-map-pin"
-          :placeholder="t('search.location')"
-        />
-      </aside>
-
-      <section class="space-y-6">
-        <div class="flex items-center justify-between">
-          <p class="text-sm text-muted">
-            {{ t('search.results', { count: listingsPage?.total ?? 0 }) }}
-          </p>
-          <USelect v-model="filters.sort" :items="sortOptions" class="w-48" />
-        </div>
-
-        <div v-if="status === 'pending'" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <USkeleton v-for="i in 6" :key="i" class="h-56 w-full" />
-        </div>
-
-        <div v-else-if="listingsPage?.items.length" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <ListingCard v-for="listing in listingsPage.items" :key="listing.id" :listing="listing" />
-        </div>
-
-        <UEmpty
-          v-else
-          icon="i-lucide-search-x"
-          :title="t('search.no_results_title')"
-          :description="t('search.no_results_description')"
-        />
-
-        <div v-if="listingsPage && listingsPage.totalPages > 1" class="flex justify-center">
-          <UPagination
-            v-model:page="filters.page"
-            :total="listingsPage.total"
-            :items-per-page="listingsPage.pageSize"
-          />
-        </div>
-      </section>
-    </div>
-  </UContainer>
-</template>

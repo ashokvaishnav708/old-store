@@ -1,72 +1,3 @@
-<script setup lang="ts">
-import type { FavoriteListing, ListingDetail } from '#shared/types/models';
-
-const { t } = useI18n();
-const route = useRoute();
-const router = useRouter();
-const toast = useToast();
-const { loggedIn, user } = useUserSession();
-
-const { data: listing, error } = await useFetch<ListingDetail>(`/api/listings/${route.params.id}`);
-
-if (error.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Listing not found', fatal: true });
-}
-
-const isOwner = computed(() => loggedIn.value && user.value?.id === listing.value?.seller.id);
-
-const isFavorite = ref(false);
-if (loggedIn.value && !isOwner.value) {
-  const favorites = await $fetch<FavoriteListing[]>('/api/favorites').catch(() => []);
-  isFavorite.value = favorites.some(f => f.listingId === listing.value?.id);
-}
-const favoriting = ref(false);
-async function toggleFavorite() {
-  if (!loggedIn.value) return router.push({ path: '/login', query: { redirect: route.fullPath } });
-  favoriting.value = true;
-  try {
-    if (isFavorite.value) {
-      await $fetch(`/api/favorites/${listing.value!.id}`, { method: 'DELETE' });
-    } else {
-      await $fetch(`/api/favorites/${listing.value!.id}`, { method: 'POST' });
-    }
-    isFavorite.value = !isFavorite.value;
-  } finally {
-    favoriting.value = false;
-  }
-}
-
-const contacting = ref(false);
-async function contactSeller() {
-  if (!loggedIn.value) return router.push({ path: '/login', query: { redirect: route.fullPath } });
-  contacting.value = true;
-  try {
-    const conversation = await $fetch('/api/conversations', {
-      method: 'POST',
-      body: { listingId: listing.value!.id }
-    });
-    router.push(`/account/messages/${conversation.id}`);
-  } catch (err) {
-    toast.add({
-      title: t('listing.contact_error'),
-      description: getErrorMessage(err),
-      color: 'error'
-    });
-  } finally {
-    contacting.value = false;
-  }
-}
-
-async function deleteListing() {
-  const url: string = `/api/listings/${listing.value!.id}`;
-  await $fetch(url, { method: 'DELETE' });
-  toast.add({ title: t('listing.delete_success'), color: 'success' });
-  router.push('/account/listings');
-}
-
-const activeImage = ref(0);
-</script>
-
 <template>
   <UContainer v-if="listing" class="py-8">
     <div class="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8">
@@ -183,3 +114,72 @@ const activeImage = ref(0);
     </div>
   </UContainer>
 </template>
+
+<script setup lang="ts">
+import type { FavoriteListing, ListingDetail } from '#shared/types/models';
+
+const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
+const toast = useToast();
+const { loggedIn, user } = useUserSession();
+
+const { data: listing, error } = await useFetch<ListingDetail>(`/api/listings/${route.params.id}`);
+
+if (error.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Listing not found', fatal: true });
+}
+
+const isOwner = computed(() => loggedIn.value && user.value?.id === listing.value?.seller.id);
+
+const isFavorite = ref(false);
+if (loggedIn.value && !isOwner.value) {
+  const favorites = await $fetch<FavoriteListing[]>('/api/favorites').catch(() => []);
+  isFavorite.value = favorites.some(f => f.listingId === listing.value?.id);
+}
+const favoriting = ref(false);
+async function toggleFavorite() {
+  if (!loggedIn.value) return router.push({ path: '/login', query: { redirect: route.fullPath } });
+  favoriting.value = true;
+  try {
+    if (isFavorite.value) {
+      await $fetch(`/api/favorites/${listing.value!.id}`, { method: 'DELETE' });
+    } else {
+      await $fetch(`/api/favorites/${listing.value!.id}`, { method: 'POST' });
+    }
+    isFavorite.value = !isFavorite.value;
+  } finally {
+    favoriting.value = false;
+  }
+}
+
+const contacting = ref(false);
+async function contactSeller() {
+  if (!loggedIn.value) return router.push({ path: '/login', query: { redirect: route.fullPath } });
+  contacting.value = true;
+  try {
+    const conversation = await $fetch('/api/conversations', {
+      method: 'POST',
+      body: { listingId: listing.value!.id }
+    });
+    router.push(`/account/messages/${conversation.id}`);
+  } catch (err) {
+    toast.add({
+      title: t('listing.contact_error'),
+      description: getErrorMessage(err),
+      color: 'error'
+    });
+  } finally {
+    contacting.value = false;
+  }
+}
+
+async function deleteListing() {
+  const url: string = `/api/listings/${listing.value!.id}`;
+  await $fetch(url, { method: 'DELETE' });
+  toast.add({ title: t('listing.delete_success'), color: 'success' });
+  router.push('/account/listings');
+}
+
+const activeImage = ref(0);
+</script>

@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import type { FavoriteListing } from '#shared/types/models';
-
-definePageMeta({ middleware: 'auth' });
-
-const { t } = useI18n();
-const { data: favorites, refresh } = await useFetch<FavoriteListing[]>('/api/favorites');
-
-async function removeFavorite(listingId: string) {
-  await $fetch(`/api/favorites/${listingId}`, { method: 'DELETE' });
-  refresh();
-}
-</script>
-
 <template>
   <UContainer class="py-8">
     <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('account.favorites_title') }}</h1>
@@ -53,3 +39,17 @@ async function removeFavorite(listingId: string) {
     </div>
   </UContainer>
 </template>
+
+<script setup lang="ts">
+import type { FavoriteListing } from '#shared/types/models';
+
+definePageMeta({ middleware: 'auth' });
+
+const { t } = useI18n();
+const { data: favorites, refresh } = await useFetch<FavoriteListing[]>('/api/favorites');
+
+async function removeFavorite(listingId: string) {
+  await $fetch(`/api/favorites/${listingId}`, { method: 'DELETE' });
+  refresh();
+}
+</script>
