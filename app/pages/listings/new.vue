@@ -47,11 +47,11 @@ async function onSubmit(event: FormSubmitEvent<ListingInput>) {
       await $fetch(`/api/listings/${listing.id}/images`, { method: 'POST', body: formData });
     }
 
-    toast.add({ title: t('listing.publishSuccess'), color: 'success' });
+    toast.add({ title: t('listing.publish_success'), color: 'success' });
     router.push(`/listings/${listing.id}`);
   } catch (err) {
     toast.add({
-      title: t('listing.publishError'),
+      title: t('listing.publish_error'),
       description: getErrorMessage(err),
       color: 'error'
     });
@@ -63,63 +63,67 @@ async function onSubmit(event: FormSubmitEvent<ListingInput>) {
 
 <template>
   <UContainer class="py-8 max-w-2xl">
-    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('listing.postNewAd') }}</h1>
+    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('listing.post_new_ad') }}</h1>
 
     <UForm :schema="listingSchema" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormField :label="t('listing.titleLabel')" name="title" required>
-        <UInput v-model="state.title" class="w-full" :placeholder="t('listing.titlePlaceholder')" />
+      <UFormField :label="t('listing.title_label')" name="title" required>
+        <UInput
+          v-model="state.title"
+          class="w-full"
+          :placeholder="t('listing.title_placeholder')"
+        />
       </UFormField>
 
-      <UFormField :label="t('listing.categoryLabel')" name="categoryId" required>
+      <UFormField :label="t('listing.category_label')" name="categoryId" required>
         <USelect
           v-model="state.categoryId"
           :items="categoryOptions"
-          :placeholder="t('listing.categoryPlaceholder')"
+          :placeholder="t('listing.category_placeholder')"
           class="w-full"
         />
       </UFormField>
 
-      <UFormField :label="t('listing.conditionLabel')" name="condition" required>
+      <UFormField :label="t('listing.condition_label')" name="condition" required>
         <USelect v-model="state.condition" :items="conditionOptions" class="w-full" />
       </UFormField>
 
       <div class="grid grid-cols-2 gap-4">
-        <UFormField :label="t('listing.priceLabel')" name="price" required>
+        <UFormField :label="t('listing.price_label')" name="price" required>
           <UInputNumber v-model="state.price" :min="0" class="w-full" />
         </UFormField>
-        <UFormField :label="t('listing.currencyLabel')" name="currency">
+        <UFormField :label="t('listing.currency_label')" name="currency">
           <UInput v-model="state.currency" maxlength="3" class="w-full uppercase" />
         </UFormField>
       </div>
 
-      <UFormField :label="t('listing.locationLabel')" name="location">
+      <UFormField :label="t('listing.location_label')" name="location">
         <UInput
           v-model="state.location"
-          :placeholder="t('listing.locationPlaceholder')"
+          :placeholder="t('listing.location_placeholder')"
           class="w-full"
         />
       </UFormField>
 
-      <UFormField :label="t('listing.descriptionLabel')" name="description" required>
+      <UFormField :label="t('listing.description_label')" name="description" required>
         <UTextarea
           v-model="state.description"
           :rows="6"
           class="w-full"
-          :placeholder="t('listing.descriptionPlaceholder')"
+          :placeholder="t('listing.description_placeholder')"
         />
       </UFormField>
 
       <UFormField
-        :label="t('listing.photosLabel')"
+        :label="t('listing.photos_label')"
         name="images"
-        :description="t('listing.photosDescription')"
+        :description="t('listing.photos_description')"
       >
         <UFileUpload
           v-model="images"
           multiple
           accept="image/*"
-          :label="t('listing.dropFiles')"
-          :description="t('listing.browseFiles')"
+          :label="t('listing.drop_files')"
+          :description="t('listing.browse_files')"
         />
       </UFormField>
 

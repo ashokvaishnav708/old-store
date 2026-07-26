@@ -17,7 +17,7 @@ const statusColors: Record<string, 'success' | 'neutral' | 'warning'> = {
 async function deleteListing(id: string) {
   const url: string = `/api/listings/${id}`;
   await $fetch(url, { method: 'DELETE' });
-  toast.add({ title: t('listing.deleteSuccess'), color: 'success' });
+  toast.add({ title: t('listing.delete_success'), color: 'success' });
   refresh();
 }
 </script>
@@ -25,16 +25,16 @@ async function deleteListing(id: string) {
 <template>
   <UContainer class="py-8">
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold text-highlighted">{{ t('account.myListingsTitle') }}</h1>
-      <UButton to="/listings/new" icon="i-lucide-plus">{{ t('home.postAd') }}</UButton>
+      <h1 class="text-2xl font-bold text-highlighted">{{ t('account.my_listings_title') }}</h1>
+      <UButton to="/listings/new" icon="i-lucide-plus">{{ t('home.post_ad') }}</UButton>
     </div>
 
     <UEmpty
       v-if="!listings?.length"
       icon="i-lucide-package-search"
-      :title="t('account.noListingsTitle')"
-      :description="t('account.noListingsDescription')"
-      :actions="[{ label: t('home.postAd'), to: '/listings/new' }]"
+      :title="t('account.no_listings_title')"
+      :description="t('account.no_listings_description')"
+      :actions="[{ label: t('home.post_ad'), to: '/listings/new' }]"
     />
 
     <div v-else class="divide-y divide-default">

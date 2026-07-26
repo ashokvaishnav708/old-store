@@ -42,7 +42,7 @@ onUnmounted(() => pause());
       color="neutral"
       class="mb-4"
     >
-      {{ t('account.backToMessages') }}
+      {{ t('account.back_to_messages') }}
     </UButton>
 
     <UCard class="mb-4">
@@ -63,13 +63,13 @@ onUnmounted(() => pause());
           </div>
         </div>
         <p v-if="!messages?.length" class="text-center text-dimmed text-sm py-8">
-          {{ t('account.noMessagesYet') }}
+          {{ t('account.no_messages_yet') }}
         </p>
       </div>
     </UCard>
 
     <form class="flex gap-2" @submit.prevent="send">
-      <UInput v-model="draft" :placeholder="t('account.typeMessage')" class="flex-1" />
+      <UInput v-model="draft" :placeholder="t('account.type_message')" class="flex-1" />
       <UButton type="submit" icon="i-lucide-send" :loading="sending" />
     </form>
   </UContainer>

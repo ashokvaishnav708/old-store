@@ -12,15 +12,15 @@ const fields = computed(() => [
   {
     name: 'email',
     type: 'text' as const,
-    label: t('auth.emailLabel'),
-    placeholder: t('auth.emailPlaceholder'),
+    label: t('auth.email_label'),
+    placeholder: t('auth.email_placeholder'),
     required: true
   },
   {
     name: 'password',
     type: 'password' as const,
-    label: t('auth.passwordLabel'),
-    placeholder: t('auth.passwordPlaceholder'),
+    label: t('auth.password_label'),
+    placeholder: t('auth.password_placeholder'),
     required: true
   }
 ]);
@@ -33,7 +33,11 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
     await refreshSession();
     router.push((route.query.redirect as string) || '/');
   } catch (err) {
-    toast.add({ title: t('auth.signInError'), description: getErrorMessage(err), color: 'error' });
+    toast.add({
+      title: t('auth.sign_in_error'),
+      description: getErrorMessage(err),
+      color: 'error'
+    });
   } finally {
     submitting.value = false;
   }
@@ -45,15 +49,15 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
     <UAuthForm
       :schema="loginSchema"
       :fields="fields"
-      :title="t('auth.loginTitle')"
-      :description="t('auth.loginDescription', { name: t('app.name') })"
+      :title="t('auth.login_title')"
+      :description="t('auth.login_description', { name: t('app.name') })"
       icon="i-lucide-store"
-      :submit="{ label: t('auth.signInLabel'), loading: submitting }"
+      :submit="{ label: t('auth.sign_in_label'), loading: submitting }"
       @submit="onSubmit"
     >
       <template #description>
-        {{ t('auth.signUpPrompt') }}
-        <ULink to="/register" class="text-primary font-medium">{{ t('auth.signUpLink') }}</ULink>
+        {{ t('auth.sign_up_prompt') }}
+        <ULink to="/register" class="text-primary font-medium">{{ t('auth.sign_up_link') }}</ULink>
       </template>
     </UAuthForm>
   </UContainer>

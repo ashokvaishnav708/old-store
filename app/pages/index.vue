@@ -12,12 +12,12 @@ const { data: listingsPage } = await useFetch<ListingPage>('/api/listings', {
 <template>
   <div>
     <UPageHero
-      :title="t('home.heroTitle')"
-      :description="t('home.heroDescription')"
+      :title="t('home.hero_title')"
+      :description="t('home.hero_description')"
       :links="[
-        { label: t('home.postAd'), to: '/listings/new', icon: 'i-lucide-plus', size: 'lg' },
+        { label: t('home.post_ad'), to: '/listings/new', icon: 'i-lucide-plus', size: 'lg' },
         {
-          label: t('home.browseListings'),
+          label: t('home.browse_listings'),
           to: '/search',
           size: 'lg',
           color: 'neutral',
@@ -41,7 +41,7 @@ const { data: listingsPage } = await useFetch<ListingPage>('/api/listings', {
       </div>
     </UPageSection>
 
-    <UPageSection :title="t('home.recentlyListed')" :ui="{ container: 'gap-6' }">
+    <UPageSection :title="t('home.recently_listed')" :ui="{ container: 'gap-6' }">
       <div
         v-if="listingsPage?.items.length"
         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
@@ -51,8 +51,8 @@ const { data: listingsPage } = await useFetch<ListingPage>('/api/listings', {
       <UEmpty
         v-else
         icon="i-lucide-package-search"
-        :title="t('home.noListingsTitle')"
-        :description="t('home.noListingsDescription')"
+        :title="t('home.no_listings_title')"
+        :description="t('home.no_listings_description')"
       />
     </UPageSection>
   </div>

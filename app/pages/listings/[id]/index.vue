@@ -48,7 +48,7 @@ async function contactSeller() {
     router.push(`/account/messages/${conversation.id}`);
   } catch (err) {
     toast.add({
-      title: t('listing.contactError'),
+      title: t('listing.contact_error'),
       description: getErrorMessage(err),
       color: 'error'
     });
@@ -60,7 +60,7 @@ async function contactSeller() {
 async function deleteListing() {
   const url: string = `/api/listings/${listing.value!.id}`;
   await $fetch(url, { method: 'DELETE' });
-  toast.add({ title: t('listing.deleteSuccess'), color: 'success' });
+  toast.add({ title: t('listing.delete_success'), color: 'success' });
   router.push('/account/listings');
 }
 
@@ -94,7 +94,7 @@ const activeImage = ref(0);
           </button>
         </div>
 
-        <UPageSection :title="t('listing.descriptionLabel')" :ui="{ container: 'py-4' }">
+        <UPageSection :title="t('listing.description_label')" :ui="{ container: 'py-4' }">
           <p class="whitespace-pre-line text-toned">
             {{ listing.description }}
           </p>
@@ -132,7 +132,7 @@ const activeImage = ref(0);
                 :loading="contacting"
                 @click="contactSeller"
               >
-                {{ t('listing.contactSeller') }}
+                {{ t('listing.contact_seller') }}
               </UButton>
               <UButton
                 block
@@ -142,7 +142,7 @@ const activeImage = ref(0);
                 :icon="isFavorite ? 'i-lucide-heart-off' : 'i-lucide-heart'"
                 @click="toggleFavorite"
               >
-                {{ isFavorite ? t('listing.removeFavorite') : t('listing.saveToFavorites') }}
+                {{ isFavorite ? t('listing.remove_favorite') : t('listing.save_to_favorites') }}
               </UButton>
             </template>
             <template v-else>
@@ -171,7 +171,7 @@ const activeImage = ref(0);
               </p>
               <p class="text-xs text-dimmed">
                 {{
-                  t('listing.memberSince', {
+                  t('listing.member_since', {
                     year: new Date(listing.seller.createdAt).getFullYear()
                   })
                 }}

@@ -9,14 +9,14 @@ const { data: conversations } = await useFetch<ConversationSummary[]>('/api/conv
 
 <template>
   <UContainer class="py-8">
-    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('account.messagesTitle') }}</h1>
+    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('account.messages_title') }}</h1>
 
     <UEmpty
       v-if="!conversations?.length"
       icon="i-lucide-message-circle"
-      :title="t('account.noConversationsTitle')"
-      :description="t('account.noConversationsDescription')"
-      :actions="[{ label: t('account.browseListings'), to: '/search' }]"
+      :title="t('account.no_conversations_title')"
+      :description="t('account.no_conversations_description')"
+      :actions="[{ label: t('account.browse_listings'), to: '/search' }]"
     />
 
     <div v-else class="divide-y divide-default">
@@ -32,7 +32,7 @@ const { data: conversations } = await useFetch<ConversationSummary[]>('/api/conv
           </p>
           <p class="text-sm text-dimmed truncate">
             {{ conversation.isSeller ? conversation.buyer.name : t('account.seller') }} ·
-            {{ conversation.lastMessage || t('account.noMessagesPreview') }}
+            {{ conversation.lastMessage || t('account.no_messages_preview') }}
           </p>
         </div>
         <span v-if="conversation.lastMessageAt" class="text-xs text-dimmed shrink-0">

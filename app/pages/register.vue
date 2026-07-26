@@ -11,22 +11,22 @@ const fields = computed(() => [
   {
     name: 'name',
     type: 'text' as const,
-    label: t('auth.nameLabel'),
-    placeholder: t('auth.namePlaceholder'),
+    label: t('auth.name_label'),
+    placeholder: t('auth.name_placeholder'),
     required: true
   },
   {
     name: 'email',
     type: 'text' as const,
-    label: t('auth.emailLabel'),
-    placeholder: t('auth.emailPlaceholder'),
+    label: t('auth.email_label'),
+    placeholder: t('auth.email_placeholder'),
     required: true
   },
   {
     name: 'password',
     type: 'password' as const,
-    label: t('auth.passwordLabel'),
-    placeholder: t('auth.passwordPlaceholderMin'),
+    label: t('auth.password_label'),
+    placeholder: t('auth.password_placeholder_min'),
     required: true
   }
 ]);
@@ -39,7 +39,11 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
     await refreshSession();
     router.push('/');
   } catch (err) {
-    toast.add({ title: t('auth.signUpError'), description: getErrorMessage(err), color: 'error' });
+    toast.add({
+      title: t('auth.sign_up_error'),
+      description: getErrorMessage(err),
+      color: 'error'
+    });
   } finally {
     submitting.value = false;
   }
@@ -51,15 +55,15 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
     <UAuthForm
       :schema="registerSchema"
       :fields="fields"
-      :title="t('auth.registerTitle')"
-      :description="t('auth.registerDescription', { name: t('app.name') })"
+      :title="t('auth.register_title')"
+      :description="t('auth.register_description', { name: t('app.name') })"
       icon="i-lucide-store"
-      :submit="{ label: t('auth.signUpLabel'), loading: submitting }"
+      :submit="{ label: t('auth.sign_up_label'), loading: submitting }"
       @submit="onSubmit"
     >
       <template #description>
-        {{ t('auth.signInPrompt') }}
-        <ULink to="/login" class="text-primary font-medium">{{ t('auth.signInLink') }}</ULink>
+        {{ t('auth.sign_in_prompt') }}
+        <ULink to="/login" class="text-primary font-medium">{{ t('auth.sign_in_link') }}</ULink>
       </template>
     </UAuthForm>
   </UContainer>

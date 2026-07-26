@@ -70,11 +70,11 @@ async function onSubmit(event: FormSubmitEvent<ListingUpdateInput>) {
       await $fetch(`/api/listings/${listing.value!.id}/images`, { method: 'POST', body: formData });
     }
 
-    toast.add({ title: t('listing.updateSuccess'), color: 'success' });
+    toast.add({ title: t('listing.update_success'), color: 'success' });
     router.push(`/listings/${listing.value!.id}`);
   } catch (err) {
     toast.add({
-      title: t('listing.updateError'),
+      title: t('listing.update_error'),
       description: getErrorMessage(err),
       color: 'error'
     });
@@ -86,7 +86,7 @@ async function onSubmit(event: FormSubmitEvent<ListingUpdateInput>) {
 
 <template>
   <UContainer v-if="listing" class="py-8 max-w-2xl">
-    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('listing.editListing') }}</h1>
+    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('listing.edit_listing') }}</h1>
 
     <div v-if="listing.images.length" class="grid grid-cols-4 gap-2 mb-6">
       <div
@@ -108,51 +108,51 @@ async function onSubmit(event: FormSubmitEvent<ListingUpdateInput>) {
     </div>
 
     <UForm :schema="listingUpdateSchema" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormField :label="t('listing.titleLabel')" name="title" required>
+      <UFormField :label="t('listing.title_label')" name="title" required>
         <UInput v-model="state.title" class="w-full" />
       </UFormField>
 
-      <UFormField :label="t('listing.categoryLabel')" name="categoryId" required>
+      <UFormField :label="t('listing.category_label')" name="categoryId" required>
         <USelect v-model="state.categoryId" :items="categoryOptions" class="w-full" />
       </UFormField>
 
-      <UFormField :label="t('listing.statusLabel')" name="status" required>
+      <UFormField :label="t('listing.status_label')" name="status" required>
         <USelect v-model="state.status" :items="statusOptions" class="w-full" />
       </UFormField>
 
-      <UFormField :label="t('listing.conditionLabel')" name="condition" required>
+      <UFormField :label="t('listing.condition_label')" name="condition" required>
         <USelect v-model="state.condition" :items="conditionOptions" class="w-full" />
       </UFormField>
 
       <div class="grid grid-cols-2 gap-4">
-        <UFormField :label="t('listing.priceLabel')" name="price" required>
+        <UFormField :label="t('listing.price_label')" name="price" required>
           <UInputNumber v-model="state.price" :min="0" class="w-full" />
         </UFormField>
-        <UFormField :label="t('listing.currencyLabel')" name="currency">
+        <UFormField :label="t('listing.currency_label')" name="currency">
           <UInput v-model="state.currency" maxlength="3" class="w-full uppercase" />
         </UFormField>
       </div>
 
-      <UFormField :label="t('listing.locationLabel')" name="location">
+      <UFormField :label="t('listing.location_label')" name="location">
         <UInput v-model="state.location" class="w-full" />
       </UFormField>
 
-      <UFormField :label="t('listing.descriptionLabel')" name="description" required>
+      <UFormField :label="t('listing.description_label')" name="description" required>
         <UTextarea v-model="state.description" :rows="6" class="w-full" />
       </UFormField>
 
-      <UFormField :label="t('listing.addPhotosLabel')" name="images">
+      <UFormField :label="t('listing.add_photos_label')" name="images">
         <UFileUpload
           v-model="newImages"
           multiple
           accept="image/*"
-          :label="t('listing.dropFiles')"
-          :description="t('listing.browseFiles')"
+          :label="t('listing.drop_files')"
+          :description="t('listing.browse_files')"
         />
       </UFormField>
 
       <UButton type="submit" block size="lg" :loading="submitting">
-        {{ t('listing.saveChanges') }}
+        {{ t('listing.save_changes') }}
       </UButton>
     </UForm>
   </UContainer>

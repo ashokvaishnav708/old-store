@@ -14,14 +14,14 @@ async function removeFavorite(listingId: string) {
 
 <template>
   <UContainer class="py-8">
-    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('account.favoritesTitle') }}</h1>
+    <h1 class="text-2xl font-bold text-highlighted mb-6">{{ t('account.favorites_title') }}</h1>
 
     <UEmpty
       v-if="!favorites?.length"
       icon="i-lucide-heart"
-      :title="t('account.noFavoritesTitle')"
-      :description="t('account.noFavoritesDescription')"
-      :actions="[{ label: t('account.browseListings'), to: '/search' }]"
+      :title="t('account.no_favorites_title')"
+      :description="t('account.no_favorites_description')"
+      :actions="[{ label: t('account.browse_listings'), to: '/search' }]"
     />
 
     <div v-else class="divide-y divide-default">

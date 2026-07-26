@@ -18,7 +18,7 @@ const filters = reactive({
 });
 
 const conditionOptions = computed(() => [
-  { label: t('search.anyCondition'), value: undefined },
+  { label: t('search.any_condition'), value: undefined },
   { label: t('conditions.new'), value: 'new' },
   { label: t('conditions.like_new'), value: 'like_new' },
   { label: t('conditions.used'), value: 'used' },
@@ -26,13 +26,13 @@ const conditionOptions = computed(() => [
 ]);
 
 const sortOptions = computed(() => [
-  { label: t('search.sortNewest'), value: 'newest' },
-  { label: t('search.sortPriceAsc'), value: 'price_asc' },
-  { label: t('search.sortPriceDesc'), value: 'price_desc' }
+  { label: t('search.sort_newest'), value: 'newest' },
+  { label: t('search.sort_price_asc'), value: 'price_asc' },
+  { label: t('search.sort_price_desc'), value: 'price_desc' }
 ]);
 
 const categoryOptions = computed(() => [
-  { label: t('search.anyCategory'), value: undefined },
+  { label: t('search.any_category'), value: undefined },
   ...(categories.value || []).map(c => ({ label: c.name, value: c.id }))
 ]);
 
@@ -96,12 +96,12 @@ watch(
         <div class="flex gap-2">
           <UInputNumber
             v-model="filters.minPrice"
-            :placeholder="t('search.minPrice')"
+            :placeholder="t('search.min_price')"
             class="w-full"
           />
           <UInputNumber
             v-model="filters.maxPrice"
-            :placeholder="t('search.maxPrice')"
+            :placeholder="t('search.max_price')"
             class="w-full"
           />
         </div>
@@ -131,8 +131,8 @@ watch(
         <UEmpty
           v-else
           icon="i-lucide-search-x"
-          :title="t('search.noResultsTitle')"
-          :description="t('search.noResultsDescription')"
+          :title="t('search.no_results_title')"
+          :description="t('search.no_results_description')"
         />
 
         <div v-if="listingsPage && listingsPage.totalPages > 1" class="flex justify-center">
