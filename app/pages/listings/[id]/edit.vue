@@ -86,7 +86,7 @@ const toast = useToast();
 const { user } = useUserSession();
 const { data: categories } = useCategories();
 
-const { data: listing } = await useFetch<ListingDetail>(`/api/listings/${route.params.id}`);
+const { data: listing } = await useLazyFetch<ListingDetail>(`/api/listings/${route.params.id}`);
 
 if (!listing.value || listing.value.seller.id !== user.value?.id) {
   throw createError({ statusCode: 403, statusMessage: 'Not your listing', fatal: true });
