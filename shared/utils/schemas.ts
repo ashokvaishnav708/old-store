@@ -7,11 +7,11 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: z.email(),
   password: z.string().min(1)
 });
 
-export const listingConditions = ['new', 'like_new', 'used', 'for_parts'] as const;
+export const listingConditions = ['new', 'like_new', 'used', 'use_marks','defect'] as const;
 export const listingStatuses = ['active', 'sold', 'archived', 'draft'] as const;
 
 export const listingSchema = z.object({
