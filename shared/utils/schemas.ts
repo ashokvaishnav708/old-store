@@ -20,7 +20,7 @@ export const listingSchema = z.object({
   price: z.coerce.number().min(0).max(10_000_000),
   currency: z.string().trim().length(3).default('EUR'),
   condition: z.enum(listingConditions),
-  categoryId: z.string().uuid(),
+  categoryId: z.uuid(),
   location: z.string().trim().max(120).optional(),
   latitude: z.coerce.number().min(-90).max(90).optional(),
   longitude: z.coerce.number().min(-180).max(180).optional()
@@ -32,7 +32,7 @@ export const listingUpdateSchema = listingSchema.partial().extend({
 
 export const listingQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
-  categoryId: z.string().uuid().optional(),
+  categoryId: z.uuid().optional(),
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
   condition: z.enum(listingConditions).optional(),
