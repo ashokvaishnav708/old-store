@@ -15,6 +15,7 @@ export interface ListingSummary {
   currency: string;
   condition: string;
   location: string | null;
+  highlightBoost: boolean;
   createdAt: string;
   category: { id: string; name: string; slug: string };
   seller: { id: string; name: string };
@@ -34,6 +35,10 @@ export interface ListingDetail {
   planId: string;
   expiresAt: string | null;
   rejectionReason: string | null;
+  highlightBoost: boolean;
+  topPlacementBoost: boolean;
+  homepageBoost: boolean;
+  boostsExpireAt: string | null;
   location: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -106,6 +111,9 @@ export interface AdminListingSummary {
   status: string;
   planId: string;
   rejectionReason: string | null;
+  highlightBoost: boolean;
+  topPlacementBoost: boolean;
+  homepageBoost: boolean;
   createdAt: string;
   category: { id: string; name: string };
   seller: { id: string; name: string; email: string };

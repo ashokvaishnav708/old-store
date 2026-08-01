@@ -25,12 +25,23 @@ export default defineEventHandler(async event => {
 
   const where = and(...conditions);
 
-  const orderBy =
+  const baseOrderBy =
     query.sort === 'price_asc'
       ? asc(listings.price)
       : query.sort === 'price_desc'
         ? desc(listings.price)
         : desc(listings.createdAt);
+
+  // "Top Placement" boost: within a category search (default sort only),
+  // currently-boosted listings float to the top, most-recently-boosted first.
+  const orderBy =
+    query.categoryId && query.sort === 'newest'
+      ? [
+          desc(sql`(${listings.topPlacementBoost} AND ${listings.boostsExpireAt} > now())`),
+          desc(listings.boostsExpireAt),
+          baseOrderBy
+        ]
+      : [baseOrderBy];
 
   const offset = (query.page - 1) * query.pageSize;
 
@@ -47,6 +58,7 @@ export default defineEventHandler(async event => {
           currency: listings.currency,
           condition: listings.condition,
           location: listings.location,
+          highlightBoost: sql<boolean>`(${listings.highlightBoost} AND ${listings.boostsExpireAt} > now())`,
           createdAt: listings.createdAt,
           category: { id: categories.id, name: categories.name, slug: categories.slug },
           seller: {
@@ -63,7 +75,7 @@ export default defineEventHandler(async event => {
         .innerJoin(categories, eq(listings.categoryId, categories.id))
         .innerJoin(users, eq(listings.userId, users.id))
         .where(where)
-        .orderBy(orderBy)
+        .orderBy(...orderBy)
         .limit(query.pageSize)
         .offset(offset),
       db.select({ total: count() }).from(listings).where(where)

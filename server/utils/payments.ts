@@ -3,11 +3,11 @@ import { eq } from 'drizzle-orm';
 import { useDb } from '~~/server/database/client';
 import { listings } from '~~/server/database/schema';
 import { expiryFromNow, type ListingPlan } from '#shared/utils/plans';
+import { boostExpiryFromNow, type AdvertisingBoost } from '#shared/utils/boosts';
 
 export interface CreateIntentInput {
   listingId: string;
   userId: string;
-  plan: ListingPlan;
   amount: number;
   currency: string;
 }
@@ -64,5 +64,37 @@ export async function applyPlanToListing(listingId: string, plan: ListingPlan) {
     })
     .where(eq(listings.id, listingId));
 
-  await invalidate(`listing:${listingId}`);
+  await invalidate(`listing:${listingId}`, 'listings:list:*');
+}
+
+/**
+ * Marks a boost as purchased on a listing. If the listing is already active,
+ * its (shared, 14-day) boost timer starts now; otherwise the timer starts
+ * when the listing is approved (see approve.post.ts).
+ */
+export async function applyBoostToListing(listingId: string, boost: AdvertisingBoost) {
+  const db = useDb();
+  const listing = await db.query.listings.findFirst({ where: eq(listings.id, listingId) });
+  if (!listing) return;
+
+  const boostsExpireAt = listing.status === 'active' ? boostExpiryFromNow() : listing.boostsExpireAt;
+
+  if (boost === 'highlight') {
+    await db
+      .update(listings)
+      .set({ highlightBoost: true, boostsExpireAt, updatedAt: new Date() })
+      .where(eq(listings.id, listingId));
+  } else if (boost === 'top_placement') {
+    await db
+      .update(listings)
+      .set({ topPlacementBoost: true, boostsExpireAt, updatedAt: new Date() })
+      .where(eq(listings.id, listingId));
+  } else {
+    await db
+      .update(listings)
+      .set({ homepageBoost: true, boostsExpireAt, updatedAt: new Date() })
+      .where(eq(listings.id, listingId));
+  }
+
+  await invalidate(`listing:${listingId}`, 'listings:list:*', 'listings:featured');
 }

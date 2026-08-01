@@ -36,6 +36,7 @@
     "post_ad": "Post an ad",
     "browse_listings": "Browse listings",
     "categories": "Categories",
+    "featured_title": "Featured",
     "recently_listed": "Recently listed",
     "no_listings_title": "No listings yet",
     "no_listings_description": "Be the first to post something for sale."
@@ -106,7 +107,15 @@
     "pending_review_notice": "This listing is awaiting approval. You can still edit its details.",
     "report_action": "Report this listing",
     "sign_in_to_view_location": "Sign in to view location",
-    "sign_in_to_contact": "Sign in to contact seller"
+    "sign_in_to_contact": "Sign in to contact seller",
+    "boosts_label": "Advertising boosts",
+    "boosts_description": "Organisation accounts can add extra visibility for {days} days. Pick any combination, or none.",
+    "boost_highlight": "Highlighted border",
+    "boost_highlight_description": "A colored border makes your ad stand out in search results",
+    "boost_top_placement": "Top placement",
+    "boost_top_placement_description": "Your ad appears at the top when people search its category",
+    "boost_homepage": "Homepage feature",
+    "boost_homepage_description": "Your ad is featured on the homepage for all visitors"
   },
   "auth": {
     "login_title": "Welcome back",

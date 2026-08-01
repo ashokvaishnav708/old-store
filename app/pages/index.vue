@@ -30,6 +30,16 @@
       </div>
     </UPageSection>
 
+    <UPageSection
+      v-if="featured?.length"
+      :title="t('home.featured_title')"
+      :ui="{ container: 'gap-6' }"
+    >
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <ListingCard v-for="listing in featured" :key="listing.id" :listing="listing" />
+      </div>
+    </UPageSection>
+
     <UPageSection :title="t('home.recently_listed')" :ui="{ container: 'gap-6' }">
       <div
         v-if="listingsPage?.items.length"
@@ -48,12 +58,15 @@
 </template>
 
 <script setup lang="ts">
-import type { ListingPage } from '#shared/types/models';
+import type { ListingPage, ListingSummary } from '#shared/types/models';
 
 const { t } = useI18n();
 const { data: categories } = useCategories();
 const { data: listingsPage } = await useFetch<ListingPage>('/api/listings', {
   key: 'home-listings',
   query: { sort: 'newest', pageSize: 12 }
+});
+const { data: featured } = await useFetch<ListingSummary[]>('/api/listings/featured', {
+  key: 'home-featured'
 });
 </script>

@@ -50,6 +50,13 @@
       "when": 1785589585670,
       "tag": "0006_add_user_listing_limit",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785590839513,
+      "tag": "0007_add_advertising_boosts",
+      "breakpoints": true
     }
   ]
 }

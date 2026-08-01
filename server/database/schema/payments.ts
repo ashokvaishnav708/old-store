@@ -2,7 +2,9 @@ import { pgTable, uuid, text, numeric, timestamp, index } from 'drizzle-orm/pg-c
 import { users } from './users';
 import { listings } from './listings';
 
+export type PaymentKind = 'plan' | 'boost';
 export type PaymentPlan = 'basic' | 'pro' | 'ultra';
+export type PaymentBoost = 'highlight' | 'top_placement' | 'homepage';
 export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'canceled';
 
 export const payments = pgTable(
@@ -15,7 +17,9 @@ export const payments = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    plan: text('plan').$type<PaymentPlan>().notNull(),
+    kind: text('kind').$type<PaymentKind>().notNull().default('plan'),
+    plan: text('plan').$type<PaymentPlan>(),
+    boost: text('boost').$type<PaymentBoost>(),
     amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
     currency: text('currency').notNull().default('EUR'),
     provider: text('provider').notNull().default('mock'),

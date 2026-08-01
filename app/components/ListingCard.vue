@@ -1,6 +1,10 @@
 <template>
   <NuxtLink :to="`/listings/${listing.id}`" class="group block">
-    <UCard :ui="{ body: 'p-0 sm:p-0' }" class="overflow-hidden h-full">
+    <UCard
+      :ui="{ body: 'p-0 sm:p-0' }"
+      class="overflow-hidden h-full"
+      :class="listing.highlightBoost ? 'ring-2 ring-red-500' : ''"
+    >
       <div class="aspect-4/3 bg-muted overflow-hidden">
         <img
           v-if="listing.thumbnail"

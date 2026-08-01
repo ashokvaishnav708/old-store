@@ -33,10 +33,13 @@
       </div>
 
       <div class="space-y-4">
-        <UCard>
+        <UCard :class="listing.highlightBoost ? 'ring-2 ring-red-500' : ''">
           <div class="space-y-3">
             <UBadge color="neutral" variant="subtle">
               {{ listing.category.name }}
+            </UBadge>
+            <UBadge v-if="listing.highlightBoost" color="error" variant="subtle">
+              {{ t('listing.boost_highlight') }}
             </UBadge>
             <h1 class="text-2xl font-bold text-highlighted">
               {{ listing.title }}

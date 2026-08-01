@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { useDb } from '~~/server/database/client';
 import { listings } from '~~/server/database/schema';
 import { expiryFromNow } from '#shared/utils/plans';
+import { boostExpiryFromNow } from '#shared/utils/boosts';
 
 export default defineEventHandler(async event => {
   const staff = await requireStaff(event);
@@ -14,6 +15,8 @@ export default defineEventHandler(async event => {
     throw createError({ statusCode: 422, statusMessage: 'Only pending listings can be approved.' });
   }
 
+  const hasBoost = existing.highlightBoost || existing.topPlacementBoost || existing.homepageBoost;
+
   const [updated] = await db
     .update(listings)
     .set({
@@ -22,6 +25,10 @@ export default defineEventHandler(async event => {
       approvedAt: new Date(),
       rejectionReason: null,
       expiresAt: expiryFromNow(existing.planId),
+      // Boosts purchased before approval start their 14-day timer now; a
+      // boost purchased on an already-active listing starts immediately
+      // instead (see applyBoostToListing), so don't overwrite that here.
+      boostsExpireAt: hasBoost && !existing.boostsExpireAt ? boostExpiryFromNow() : existing.boostsExpireAt,
       updatedAt: new Date()
     })
     .where(eq(listings.id, id))

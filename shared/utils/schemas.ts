@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { listingPlans } from './plans';
+import { advertisingBoosts } from './boosts';
 
 export const registerSchema = z.object({
   firstName: z.string().trim().min(1).max(60),
@@ -54,6 +55,11 @@ export const messageSchema = z.object({
 export const createPaymentSchema = z.object({
   listingId: z.uuid(),
   plan: z.enum(listingPlans)
+});
+
+export const createBoostPaymentSchema = z.object({
+  listingId: z.uuid(),
+  boost: z.enum(advertisingBoosts)
 });
 
 export const rejectListingSchema = z.object({
@@ -114,6 +120,7 @@ export type ListingUpdateInput = z.infer<typeof listingUpdateSchema>;
 export type ListingQuery = z.infer<typeof listingQuerySchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
 export type CreatePaymentInput = z.infer<typeof createPaymentSchema>;
+export type CreateBoostPaymentInput = z.infer<typeof createBoostPaymentSchema>;
 export type RejectListingInput = z.infer<typeof rejectListingSchema>;
 export type ComplaintInput = z.infer<typeof complaintSchema>;
 export type RespondComplaintInput = z.infer<typeof respondComplaintSchema>;

@@ -28,7 +28,11 @@ export default defineEventHandler(async event => {
     .returning();
 
   if (result.succeeded) {
-    await applyPlanToListing(payment.listingId, payment.plan);
+    if (payment.kind === 'boost' && payment.boost) {
+      await applyBoostToListing(payment.listingId, payment.boost);
+    } else if (payment.plan) {
+      await applyPlanToListing(payment.listingId, payment.plan);
+    }
   }
 
   return updated;

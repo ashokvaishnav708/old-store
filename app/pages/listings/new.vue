@@ -83,8 +83,31 @@
         </div>
       </UFormField>
 
+      <UFormField
+        v-if="isOrganisation"
+        :label="t('listing.boosts_label')"
+        :description="t('listing.boosts_description', { days: BOOST_DURATION_DAYS })"
+      >
+        <div class="space-y-2">
+          <label
+            v-for="b in advertisingBoosts"
+            :key="b"
+            class="flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition"
+            :class="selectedBoosts.includes(b) ? 'border-primary ring-1 ring-primary' : 'border-default'"
+          >
+            <UCheckbox :model-value="selectedBoosts.includes(b)" @update:model-value="toggleBoost(b)" />
+            <div>
+              <p class="font-medium text-highlighted">{{ t(`listing.boost_${b}`) }}</p>
+              <p class="text-sm text-dimmed">
+                {{ t(`listing.boost_${b}_description`) }} · {{ formatPrice(boostPrices[b]) }}
+              </p>
+            </div>
+          </label>
+        </div>
+      </UFormField>
+
       <UButton type="submit" block size="lg" :loading="submitting">
-        {{ plan === 'basic' ? t('listing.publish') : t('listing.pay_and_publish') }}
+        {{ plan === 'basic' && !selectedBoosts.length ? t('listing.publish') : t('listing.pay_and_publish') }}
       </UButton>
     </UForm>
   </UContainer>
@@ -95,6 +118,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { listingSchema, type ListingInput } from '#shared/utils/schemas';
 import type { ListingDetail } from '#shared/types/models';
 import { listingPlans, planPrices, planDurationDays, type ListingPlan } from '#shared/utils/plans';
+import { advertisingBoosts, boostPrices, BOOST_DURATION_DAYS, type AdvertisingBoost } from '#shared/utils/boosts';
 
 definePageMeta({ middleware: 'auth' });
 
@@ -102,6 +126,15 @@ const { t } = useI18n();
 const router = useRouter();
 const toast = useToast();
 const { data: categories } = useCategories();
+const { user } = useUserSession();
+
+const isOrganisation = computed(() => user.value?.userType === 'organisation');
+const selectedBoosts = ref<AdvertisingBoost[]>([]);
+function toggleBoost(boost: AdvertisingBoost) {
+  const index = selectedBoosts.value.indexOf(boost);
+  if (index === -1) selectedBoosts.value.push(boost);
+  else selectedBoosts.value.splice(index, 1);
+}
 
 const categoryOptions = computed(() =>
   (categories.value || []).map(c => ({ label: c.name, value: c.id }))
@@ -147,6 +180,14 @@ async function onSubmit(event: FormSubmitEvent<ListingInput>) {
       const payment = await $fetch('/api/payments', {
         method: 'POST',
         body: { listingId: listing.id, plan: plan.value }
+      });
+      await $fetch(`/api/payments/${payment.id}/confirm`, { method: 'POST' });
+    }
+
+    for (const boost of selectedBoosts.value) {
+      const payment = await $fetch('/api/payments/boost', {
+        method: 'POST',
+        body: { listingId: listing.id, boost }
       });
       await $fetch(`/api/payments/${payment.id}/confirm`, { method: 'POST' });
     }

@@ -4,6 +4,7 @@ import {
   text,
   numeric,
   integer,
+  boolean,
   doublePrecision,
   timestamp,
   pgEnum,
@@ -57,6 +58,12 @@ export const listings = pgTable(
     }),
     approvedAt: timestamp('approved_at', { withTimezone: true }),
     rejectionReason: text('rejection_reason'),
+    // Organisation-only advertising add-ons (see shared/utils/boosts.ts). All
+    // three share one expiry — a fixed 14-day window starting at approval.
+    highlightBoost: boolean('highlight_boost').notNull().default(false),
+    topPlacementBoost: boolean('top_placement_boost').notNull().default(false),
+    homepageBoost: boolean('homepage_boost').notNull().default(false),
+    boostsExpireAt: timestamp('boosts_expire_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
   },
@@ -64,7 +71,8 @@ export const listings = pgTable(
     index('listings_category_idx').on(table.categoryId),
     index('listings_user_idx').on(table.userId),
     index('listings_status_created_idx').on(table.status, table.createdAt),
-    index('listings_status_expires_idx').on(table.status, table.expiresAt)
+    index('listings_status_expires_idx').on(table.status, table.expiresAt),
+    index('listings_homepage_boost_idx').on(table.homepageBoost, table.boostsExpireAt)
   ]
 );
 

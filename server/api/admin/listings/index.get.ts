@@ -28,6 +28,9 @@ export default defineEventHandler(async event => {
         status: listings.status,
         planId: listings.planId,
         rejectionReason: listings.rejectionReason,
+        highlightBoost: listings.highlightBoost,
+        topPlacementBoost: listings.topPlacementBoost,
+        homepageBoost: listings.homepageBoost,
         createdAt: listings.createdAt,
         category: { id: categories.id, name: categories.name },
         seller: {

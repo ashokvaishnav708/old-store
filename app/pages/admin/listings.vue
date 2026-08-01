@@ -40,6 +40,17 @@
             <p v-if="listing.rejectionReason" class="text-sm text-error mt-1">
               {{ t('admin.rejection_reason_label') }}: {{ listing.rejectionReason }}
             </p>
+            <div v-if="listing.highlightBoost || listing.topPlacementBoost || listing.homepageBoost" class="flex gap-1 mt-1">
+              <UBadge v-if="listing.highlightBoost" color="error" variant="subtle" size="sm">
+                {{ t('listing.boost_highlight') }}
+              </UBadge>
+              <UBadge v-if="listing.topPlacementBoost" color="warning" variant="subtle" size="sm">
+                {{ t('listing.boost_top_placement') }}
+              </UBadge>
+              <UBadge v-if="listing.homepageBoost" color="info" variant="subtle" size="sm">
+                {{ t('listing.boost_homepage') }}
+              </UBadge>
+            </div>
           </div>
 
           <div v-if="status === 'pending'" class="flex items-center gap-2 shrink-0">
