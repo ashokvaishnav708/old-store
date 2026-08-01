@@ -20,7 +20,7 @@ export default defineNuxtConfig({
       publicUrl: process.env.S3_PUBLIC_URL
     },
     public: {
-      appName: 'OldStore'
+      appName: 'Old Store'
     }
   },
 
@@ -45,7 +45,10 @@ export default defineNuxtConfig({
 
   eslint: {
     config: {
-      // Formatting is handled by Prettier; keep ESLint focused on code quality.
+      typescript: {
+        strict: true,
+        tsconfigPath: './'
+      },
       stylistic: false
     }
   },
