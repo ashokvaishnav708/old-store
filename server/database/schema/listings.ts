@@ -16,7 +16,8 @@ export const listingConditionEnum = pgEnum('listing_condition', [
   'new',
   'like_new',
   'used',
-  'for_parts'
+  'use_marks',
+  'defect',
 ]);
 export const listingStatusEnum = pgEnum('listing_status', ['active', 'sold', 'archived', 'draft']);
 
