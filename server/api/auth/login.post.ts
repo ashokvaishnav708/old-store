@@ -32,7 +32,8 @@ export default defineEventHandler(async event => {
       email: user.email,
       avatarUrl: user.avatarUrl,
       userType: user.userType ?? 'private',
-      verified: user.verified ?? false
+      verified: user.verified ?? false,
+      listingLimit: user.listingLimit
     }
   });
 

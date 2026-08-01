@@ -17,5 +17,6 @@ export default defineNitroPlugin(() => {
     session.user.avatarUrl = user.avatarUrl;
     session.user.userType = user.userType ?? 'private';
     session.user.verified = user.verified ?? false;
+    session.user.listingLimit = user.listingLimit;
   });
 });

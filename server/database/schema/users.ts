@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, boolean, integer, timestamp } from 'drizzle-orm/pg-core';
 
 export type UserType = 'admin' | 'assistant' | 'private' | 'organisation';
 export type UserSubscription = 'basic' | 'pro' | 'ultra';
@@ -15,6 +15,9 @@ export const users = pgTable('users', {
   userType: text('user_type').$type<UserType>().default('private'),
   userSubscription: text('user_subscription').$type<UserSubscription>().default('basic'),
   verified: boolean('verified').default(false),
+  // How many listings this customer may have pending/active at once.
+  // Defaults to 5; admin/assistants can raise or lower it per-user.
+  listingLimit: integer('listing_limit').notNull().default(5),
   bannedAt: timestamp('banned_at', { withTimezone: true }),
   bannedReason: text('banned_reason'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

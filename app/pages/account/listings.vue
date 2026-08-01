@@ -1,9 +1,19 @@
 <template>
   <UContainer class="py-8">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-1">
       <h1 class="text-2xl font-bold text-highlighted">{{ t('account.my_listings_title') }}</h1>
-      <UButton to="/listings/new" icon="i-lucide-plus">{{ t('home.post_ad') }}</UButton>
+      <UButton
+        to="/listings/new"
+        icon="i-lucide-plus"
+        :disabled="atLimit"
+      >
+        {{ t('home.post_ad') }}
+      </UButton>
     </div>
+    <p class="text-sm mb-6" :class="atLimit ? 'text-warning' : 'text-dimmed'">
+      {{ t('account.listing_quota', { used: activeCount, limit: user?.listingLimit ?? 5 }) }}
+      <span v-if="atLimit"> — {{ t('account.listing_quota_reached') }}</span>
+    </p>
 
     <UEmpty
       v-if="!listings?.length"
@@ -70,7 +80,13 @@ definePageMeta({ middleware: 'auth' });
 
 const { t } = useI18n();
 const toast = useToast();
+const { user } = useUserSession();
 const { data: listings, refresh } = await useFetch<MyListing[]>('/api/listings/mine');
+
+const activeCount = computed(
+  () => listings.value?.filter(l => l.status === 'pending' || l.status === 'active').length ?? 0
+);
+const atLimit = computed(() => activeCount.value >= (user.value?.listingLimit ?? 5));
 
 const statusColors: Record<string, 'success' | 'neutral' | 'warning' | 'error'> = {
   active: 'success',

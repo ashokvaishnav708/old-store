@@ -8,6 +8,7 @@ interface SessionSnapshot {
   avatarUrl: string | null;
   userType: 'admin' | 'assistant' | 'private' | 'organisation';
   verified: boolean;
+  listingLimit: number;
 }
 
 /**
@@ -36,7 +37,8 @@ export default defineEventHandler(async event => {
       name: `${user.firstName} ${user.lastName}`,
       avatarUrl: user.avatarUrl,
       userType: user.userType ?? 'private',
-      verified: user.verified ?? false
+      verified: user.verified ?? false,
+      listingLimit: user.listingLimit
     };
   });
 
@@ -45,15 +47,23 @@ export default defineEventHandler(async event => {
     throw createError({ statusCode: 403, statusMessage: 'This account has been banned.' });
   }
 
-  const { name, avatarUrl, userType, verified } = session.user;
+  const { name, avatarUrl, userType, verified, listingLimit } = session.user;
   if (
     name !== snapshot.name ||
     avatarUrl !== snapshot.avatarUrl ||
     userType !== snapshot.userType ||
-    verified !== snapshot.verified
+    verified !== snapshot.verified ||
+    listingLimit !== snapshot.listingLimit
   ) {
     await setUserSession(event, {
-      user: { ...session.user, name: snapshot.name, avatarUrl: snapshot.avatarUrl, userType: snapshot.userType, verified: snapshot.verified }
+      user: {
+        ...session.user,
+        name: snapshot.name,
+        avatarUrl: snapshot.avatarUrl,
+        userType: snapshot.userType,
+        verified: snapshot.verified,
+        listingLimit: snapshot.listingLimit
+      }
     });
   }
 });

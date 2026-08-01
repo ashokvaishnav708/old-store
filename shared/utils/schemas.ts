@@ -103,6 +103,10 @@ export const sendNotificationSchema = z.object({
   body: z.string().trim().max(2000).optional()
 });
 
+export const updateListingLimitSchema = z.object({
+  listingLimit: z.coerce.number().int().min(0).max(1000)
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ListingInput = z.infer<typeof listingSchema>;
@@ -118,3 +122,4 @@ export type BanEmailInput = z.infer<typeof banEmailSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type SendNotificationInput = z.infer<typeof sendNotificationSchema>;
+export type UpdateListingLimitInput = z.infer<typeof updateListingLimitSchema>;

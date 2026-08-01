@@ -25,6 +25,7 @@
           <div class="min-w-0">
             <p class="font-medium text-highlighted">{{ result.name }}</p>
             <p class="text-sm text-dimmed">{{ result.email }} · {{ result.userType }}</p>
+            <p class="text-xs text-dimmed mt-1">{{ t('admin.listing_limit_label') }}: {{ result.listingLimit }}</p>
             <UBadge v-if="result.bannedAt" color="error" variant="subtle" class="mt-1">
               {{ t('admin.banned') }}{{ result.bannedReason ? `: ${result.bannedReason}` : '' }}
             </UBadge>
@@ -34,35 +35,57 @@
               size="sm"
               color="neutral"
               variant="ghost"
+              icon="i-lucide-list-check"
+              @click="limitEditId = limitEditId === result.id ? null : result.id"
+            >
+              {{ t('admin.edit_listing_limit') }}
+            </UButton>
+            <UButton
+              size="sm"
+              color="neutral"
+              variant="ghost"
               icon="i-lucide-send"
               @click="messagingId = messagingId === result.id ? null : result.id"
             >
               {{ t('admin.message_user') }}
             </UButton>
-            <UButton
-              v-if="!result.bannedAt"
-              size="sm"
-              color="error"
-              variant="ghost"
-              icon="i-lucide-ban"
-              :loading="actingId === result.id"
-              @click="banningId = banningId === result.id ? null : result.id"
-            >
-              {{ t('admin.ban') }}
-            </UButton>
-            <UButton
-              v-else
-              size="sm"
-              color="success"
-              variant="ghost"
-              icon="i-lucide-circle-check"
-              :loading="actingId === result.id"
-              @click="unban(result.email)"
-            >
-              {{ t('admin.unban') }}
-            </UButton>
+            <template v-if="isAdmin">
+              <UButton
+                v-if="!result.bannedAt"
+                size="sm"
+                color="error"
+                variant="ghost"
+                icon="i-lucide-ban"
+                :loading="actingId === result.id"
+                @click="banningId = banningId === result.id ? null : result.id"
+              >
+                {{ t('admin.ban') }}
+              </UButton>
+              <UButton
+                v-else
+                size="sm"
+                color="success"
+                variant="ghost"
+                icon="i-lucide-circle-check"
+                :loading="actingId === result.id"
+                @click="unban(result.email)"
+              >
+                {{ t('admin.unban') }}
+              </UButton>
+            </template>
           </div>
         </div>
+
+        <form
+          v-if="limitEditId === result.id"
+          class="flex items-center gap-2 mt-3"
+          @submit.prevent="updateLimit(result.id)"
+        >
+          <UInputNumber v-model="limitValue" :min="0" :max="1000" class="w-32" />
+          <UButton type="submit" size="sm" :loading="actingId === result.id">
+            {{ t('admin.save') }}
+          </UButton>
+        </form>
 
         <form
           v-if="banningId === result.id"
@@ -103,6 +126,8 @@ definePageMeta({ middleware: 'admin' });
 
 const { t } = useI18n();
 const toast = useToast();
+const { user } = useUserSession();
+const isAdmin = computed(() => user.value?.userType === 'admin');
 
 const email = ref('');
 const searching = ref(false);
@@ -153,6 +178,31 @@ async function unban(targetEmail: string) {
   actingId.value = target.id;
   try {
     await $fetch('/api/admin/users/unban', { method: 'POST', body: { email: targetEmail } });
+    await search();
+  } catch (err) {
+    toast.add({ title: t('admin.action_failed'), description: getErrorMessage(err), color: 'error' });
+  } finally {
+    actingId.value = null;
+  }
+}
+
+const limitEditId = ref<string | null>(null);
+const limitValue = ref(5);
+
+watch(limitEditId, id => {
+  const target = results.value.find(r => r.id === id);
+  if (target) limitValue.value = target.listingLimit;
+});
+
+async function updateLimit(targetUserId: string) {
+  actingId.value = targetUserId;
+  try {
+    await $fetch(`/api/admin/users/${targetUserId}/listing-limit`, {
+      method: 'POST',
+      body: { listingLimit: limitValue.value }
+    });
+    toast.add({ title: t('admin.listing_limit_updated'), color: 'success' });
+    limitEditId.value = null;
     await search();
   } catch (err) {
     toast.add({ title: t('admin.action_failed'), description: getErrorMessage(err), color: 'error' });

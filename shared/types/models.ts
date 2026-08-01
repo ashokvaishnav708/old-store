@@ -148,6 +148,7 @@ export interface AdminUserSearchResult {
   userType: string;
   bannedAt: string | null;
   bannedReason: string | null;
+  listingLimit: number;
   createdAt: string;
 }
 

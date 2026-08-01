@@ -6,6 +6,7 @@ declare module '#auth-utils' {
     avatarUrl?: string | null;
     userType: 'admin' | 'assistant' | 'private' | 'organisation';
     verified: boolean;
+    listingLimit: number;
   }
 }
 

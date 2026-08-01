@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "listing_limit" integer DEFAULT 5 NOT NULL;

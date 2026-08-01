@@ -153,6 +153,8 @@
     "my_listings_title": "My listings",
     "no_listings_title": "No listings yet",
     "no_listings_description": "Post your first ad to start selling.",
+    "listing_quota": "{used} of {limit} listing slots used",
+    "listing_quota_reached": "you've reached your limit",
     "favorites_title": "Favorites",
     "no_favorites_title": "No favorites yet",
     "no_favorites_description": "Save listings you're interested in to find them here.",
@@ -213,7 +215,11 @@
     "message_user": "Message",
     "message_title_placeholder": "Message title",
     "message_body_placeholder": "Message (optional)",
-    "message_sent": "Message sent"
+    "message_sent": "Message sent",
+    "listing_limit_label": "Listing limit",
+    "edit_listing_limit": "Edit limit",
+    "save": "Save",
+    "listing_limit_updated": "Listing limit updated"
   },
   "notifications": {
     "title": "Notifications",
