@@ -97,6 +97,12 @@ export const resetPasswordSchema = z.object({
   password: z.string().min(8).max(72)
 });
 
+export const sendNotificationSchema = z.object({
+  targetUserId: z.uuid(),
+  title: z.string().trim().min(1).max(120),
+  body: z.string().trim().max(2000).optional()
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ListingInput = z.infer<typeof listingSchema>;
@@ -111,3 +117,4 @@ export type CreateAssistantInput = z.infer<typeof createAssistantSchema>;
 export type BanEmailInput = z.infer<typeof banEmailSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type SendNotificationInput = z.infer<typeof sendNotificationSchema>;

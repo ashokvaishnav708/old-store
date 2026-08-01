@@ -24,7 +24,8 @@ export default defineEventHandler(async event => {
       lastName: body.lastName,
       email: body.email,
       passwordHash,
-      userType: 'assistant'
+      userType: 'assistant',
+      verified: true
     })
     .returning({
       id: users.id,

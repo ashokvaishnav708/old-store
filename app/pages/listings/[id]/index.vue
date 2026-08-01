@@ -45,7 +45,11 @@
               {{ formatPrice(listing.price, listing.currency) }}
             </p>
             <div class="flex flex-wrap gap-2 text-sm text-dimmed">
-              <span v-if="listing.location" class="flex items-center gap-1">
+              <span v-if="!loggedIn" class="flex items-center gap-1">
+                <UIcon name="i-lucide-map-pin" />
+                <ULink to="/login" class="text-primary">{{ t('listing.sign_in_to_view_location') }}</ULink>
+              </span>
+              <span v-else-if="listing.location" class="flex items-center gap-1">
                 <UIcon name="i-lucide-map-pin" /> {{ listing.location }}
               </span>
               <span class="flex items-center gap-1">
@@ -58,12 +62,23 @@
 
             <template v-if="!isOwner">
               <UButton
+                v-if="loggedIn"
                 block
                 icon="i-lucide-message-circle"
                 :loading="contacting"
                 @click="contactSeller"
               >
                 {{ t('listing.contact_seller') }}
+              </UButton>
+              <UButton
+                v-else
+                block
+                color="neutral"
+                variant="outline"
+                icon="i-lucide-lock"
+                to="/login"
+              >
+                {{ t('listing.sign_in_to_contact') }}
               </UButton>
               <UButton
                 block

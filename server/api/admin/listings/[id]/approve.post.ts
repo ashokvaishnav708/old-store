@@ -29,5 +29,13 @@ export default defineEventHandler(async event => {
 
   await invalidate(`listing:${id}`, 'listings:list:*');
 
+  await notifyUser({
+    userId: existing.userId,
+    type: 'listing_approved',
+    title: 'Your ad has been successfully published',
+    body: existing.title,
+    link: `/listings/${id}`
+  });
+
   return updated;
 });

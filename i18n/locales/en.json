@@ -11,6 +11,7 @@
     "my_listings": "My listings",
     "favorites": "Favorites",
     "messages": "Messages",
+    "notifications": "Notifications",
     "admin": "Admin",
     "footer": "© {year} {name}"
   },
@@ -103,7 +104,9 @@
     "upgrade_to": "Upgrade to {plan}",
     "plan_upgraded": "Plan upgraded",
     "pending_review_notice": "This listing is awaiting approval. You can still edit its details.",
-    "report_action": "Report this listing"
+    "report_action": "Report this listing",
+    "sign_in_to_view_location": "Sign in to view location",
+    "sign_in_to_contact": "Sign in to contact seller"
   },
   "auth": {
     "login_title": "Welcome back",
@@ -138,7 +141,13 @@
     "reset_password_submit": "Reset password",
     "reset_password_done_title": "Password updated",
     "reset_password_done_description": "You can now sign in with your new password.",
-    "reset_link_invalid": "This reset link is invalid or has expired."
+    "reset_link_invalid": "This reset link is invalid or has expired.",
+    "verify_email_banner": "Please verify your email to post listings and message sellers.",
+    "resend_verification": "Resend verification email",
+    "verification_sent": "Verification email sent",
+    "email_verified_title": "Email verified",
+    "email_verified_description": "Your email address has been confirmed.",
+    "verification_failed": "This verification link is invalid or has expired."
   },
   "account": {
     "my_listings_title": "My listings",
@@ -200,7 +209,17 @@
     "no_complaints_title": "No complaints in this status",
     "conversations_title": "Conversations",
     "no_conversations_title": "No conversations yet",
-    "back_to_conversations": "Back to conversations"
+    "back_to_conversations": "Back to conversations",
+    "message_user": "Message",
+    "message_title_placeholder": "Message title",
+    "message_body_placeholder": "Message (optional)",
+    "message_sent": "Message sent"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "mark_all_read": "Mark all as read",
+    "view_all": "View all"
   },
   "complaints": {
     "status_open": "Open",

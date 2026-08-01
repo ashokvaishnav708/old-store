@@ -151,6 +151,18 @@ export interface AdminUserSearchResult {
   createdAt: string;
 }
 
+export interface NotificationItem {
+  id: string;
+  userId: string;
+  senderId: string | null;
+  type: string;
+  title: string;
+  body: string | null;
+  link: string | null;
+  readAt: string | null;
+  createdAt: string;
+}
+
 export interface AdminConversationThread {
   buyerId: string;
   sellerId: string;

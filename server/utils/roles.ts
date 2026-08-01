@@ -18,3 +18,14 @@ export async function requireAdmin(event: H3Event) {
   }
   return user;
 }
+
+export async function requireVerified(event: H3Event) {
+  const { user } = await requireUserSession(event);
+  if (!user.verified) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Please verify your email address before continuing.'
+    });
+  }
+  return user;
+}

@@ -36,7 +36,7 @@ export default defineEventHandler(async event => {
 
   const cacheKey = `listings:list:${JSON.stringify(query)}`;
 
-  return cached(cacheKey, 30, async () => {
+  const page = await cached(cacheKey, 30, async () => {
     const [rows, [totalRow]] = await Promise.all([
       db
         .select({
@@ -78,4 +78,14 @@ export default defineEventHandler(async event => {
       totalPages: Math.ceil(total / query.pageSize)
     };
   });
+
+  // Applied fresh on every request (not cached) so the cache can't leak
+  // real locations to a guest, and logged-in users aren't affected by a
+  // guest's cached response.
+  const session = await getUserSession(event);
+  if (!session.user) {
+    return { ...page, items: page.items.map(item => ({ ...item, location: null })) };
+  }
+
+  return page;
 });

@@ -16,5 +16,6 @@ export default defineNitroPlugin(() => {
     session.user.name = `${user.firstName} ${user.lastName}`;
     session.user.avatarUrl = user.avatarUrl;
     session.user.userType = user.userType ?? 'private';
+    session.user.verified = user.verified ?? false;
   });
 });

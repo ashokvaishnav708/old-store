@@ -27,5 +27,13 @@ export default defineEventHandler(async event => {
 
   await invalidate(`listing:${id}`, 'listings:list:*');
 
+  await notifyUser({
+    userId: existing.userId,
+    type: 'listing_rejected',
+    title: 'Your ad was not approved',
+    body: body.reason,
+    link: `/listings/${id}/edit`
+  });
+
   return updated;
 });

@@ -29,3 +29,17 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string) {
     `
   });
 }
+
+export async function sendVerificationEmail(to: string, verifyUrl: string) {
+  const config = useRuntimeConfig();
+  await useMailer().sendMail({
+    from: config.smtp.from as string,
+    to,
+    subject: 'Verify your email',
+    html: `
+      <p>Welcome to ${config.public.appName}! Please confirm your email address to finish setting up your account.</p>
+      <p><a href="${verifyUrl}">Click here to verify your email</a>. This link expires in 1 hour.</p>
+      <p>If you didn't create this account, you can safely ignore this email.</p>
+    `
+  });
+}

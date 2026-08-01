@@ -58,13 +58,12 @@ export default defineEventHandler(async event => {
   const isExpired = listing.expiresAt !== null && new Date(listing.expiresAt) <= new Date();
   const isPubliclyVisible = listing.status === 'active' && !isExpired;
 
-  if (!isPubliclyVisible) {
-    const session = await getUserSession(event);
-    const isOwner = session.user?.id === listing.userId;
-    const isStaff = session.user?.userType === 'admin' || session.user?.userType === 'assistant';
-    if (!isOwner && !isStaff) {
-      throw createError({ statusCode: 404, statusMessage: 'Listing not found.' });
-    }
+  const session = await getUserSession(event);
+  const isOwner = session.user?.id === listing.userId;
+  const isStaff = session.user?.userType === 'admin' || session.user?.userType === 'assistant';
+
+  if (!isPubliclyVisible && !isOwner && !isStaff) {
+    throw createError({ statusCode: 404, statusMessage: 'Listing not found.' });
   }
 
   // Kept out of the cached payload above so it doesn't go stale with the TTL.
@@ -72,6 +71,13 @@ export default defineEventHandler(async event => {
     .update(listings)
     .set({ viewCount: sql`${listings.viewCount} + 1` })
     .where(eq(listings.id, id));
+
+  // Guests must sign in to see the exact location/coordinates or contact the
+  // seller — applied fresh per request (not cached) so it can't leak through
+  // the shared 30s cache above.
+  if (!session.user) {
+    return { ...listing, location: null, latitude: null, longitude: null };
+  }
 
   return listing;
 });

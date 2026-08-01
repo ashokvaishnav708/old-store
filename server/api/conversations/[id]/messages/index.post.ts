@@ -27,5 +27,14 @@ export default defineEventHandler(async event => {
     })
     .returning();
 
+  const recipientId = conversation.buyerId === user.id ? conversation.sellerId : conversation.buyerId;
+  await notifyUser({
+    userId: recipientId,
+    type: 'message',
+    title: 'New message',
+    body: body.body,
+    link: `/account/messages/${id}`
+  });
+
   return message;
 });

@@ -49,7 +49,8 @@ async function seedAdmin() {
       passwordHash,
       firstName: 'Admin',
       lastName: 'User',
-      userType: 'admin'
+      userType: 'admin',
+      verified: true
     })
     .onConflictDoNothing({ target: schema.users.email });
 

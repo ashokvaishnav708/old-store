@@ -17,7 +17,7 @@ export async function banUserById(userId: string, reason: string | undefined, ba
     .values({ email: user.email, reason, bannedByUserId })
     .onConflictDoUpdate({ target: bannedEmails.email, set: { reason, bannedByUserId } });
 
-  await invalidate(`user:banned:${userId}`);
+  await invalidate(`user:session-sync:${userId}`);
   return user;
 }
 
@@ -32,6 +32,6 @@ export async function unbanUserById(userId: string) {
     .where(eq(users.id, userId));
 
   await db.delete(bannedEmails).where(eq(bannedEmails.email, user.email));
-  await invalidate(`user:banned:${userId}`);
+  await invalidate(`user:session-sync:${userId}`);
   return user;
 }

@@ -31,6 +31,15 @@
           </div>
           <div class="flex items-center gap-2 shrink-0">
             <UButton
+              size="sm"
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-send"
+              @click="messagingId = messagingId === result.id ? null : result.id"
+            >
+              {{ t('admin.message_user') }}
+            </UButton>
+            <UButton
               v-if="!result.bannedAt"
               size="sm"
               color="error"
@@ -63,6 +72,23 @@
           <UInput v-model="banReason" class="flex-1" :placeholder="t('admin.ban_reason_placeholder')" />
           <UButton type="submit" color="error" size="sm" :loading="actingId === result.id">
             {{ t('admin.confirm_ban') }}
+          </UButton>
+        </form>
+
+        <form
+          v-if="messagingId === result.id"
+          class="space-y-2 mt-3"
+          @submit.prevent="sendMessage(result.id)"
+        >
+          <UInput v-model="messageTitle" class="w-full" :placeholder="t('admin.message_title_placeholder')" />
+          <UTextarea
+            v-model="messageBody"
+            class="w-full"
+            :rows="2"
+            :placeholder="t('admin.message_body_placeholder')"
+          />
+          <UButton type="submit" size="sm" :loading="actingId === result.id">
+            {{ t('admin.message_user') }}
           </UButton>
         </form>
       </div>
@@ -128,6 +154,29 @@ async function unban(targetEmail: string) {
   try {
     await $fetch('/api/admin/users/unban', { method: 'POST', body: { email: targetEmail } });
     await search();
+  } catch (err) {
+    toast.add({ title: t('admin.action_failed'), description: getErrorMessage(err), color: 'error' });
+  } finally {
+    actingId.value = null;
+  }
+}
+
+const messagingId = ref<string | null>(null);
+const messageTitle = ref('');
+const messageBody = ref('');
+
+async function sendMessage(targetUserId: string) {
+  if (!messageTitle.value.trim()) return;
+  actingId.value = targetUserId;
+  try {
+    await $fetch('/api/admin/notifications', {
+      method: 'POST',
+      body: { targetUserId, title: messageTitle.value, body: messageBody.value || undefined }
+    });
+    toast.add({ title: t('admin.message_sent'), color: 'success' });
+    messagingId.value = null;
+    messageTitle.value = '';
+    messageBody.value = '';
   } catch (err) {
     toast.add({ title: t('admin.action_failed'), description: getErrorMessage(err), color: 'error' });
   } finally {

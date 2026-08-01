@@ -6,7 +6,7 @@ import { listings, categories } from '~~/server/database/schema';
 import { listingSchema } from '#shared/utils/schemas';
 
 export default defineEventHandler(async event => {
-  const { user } = await requireUserSession(event);
+  const user = await requireVerified(event);
   await rateLimit(`ratelimit:create-listing:${user.id}`, 20, 60 * 60);
 
   const body = await readValidatedBody(event, listingSchema.parse);

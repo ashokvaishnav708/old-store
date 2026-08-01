@@ -5,6 +5,7 @@ declare module '#auth-utils' {
     email: string;
     avatarUrl?: string | null;
     userType: 'admin' | 'assistant' | 'private' | 'organisation';
+    verified: boolean;
   }
 }
 

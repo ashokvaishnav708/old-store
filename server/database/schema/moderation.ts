@@ -28,6 +28,24 @@ export const passwordResetTokens = pgTable(
   ]
 );
 
+export const emailVerificationTokens = pgTable(
+  'email_verification_tokens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tokenHash: text('token_hash').notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    usedAt: timestamp('used_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+  },
+  table => [
+    index('email_verification_tokens_user_idx').on(table.userId),
+    index('email_verification_tokens_token_hash_idx').on(table.tokenHash)
+  ]
+);
+
 export type ComplaintStatus = 'open' | 'in_review' | 'resolved' | 'dismissed';
 
 export const complaints = pgTable(
@@ -61,5 +79,7 @@ export const complaints = pgTable(
 export type BannedEmail = typeof bannedEmails.$inferSelect;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type NewPasswordResetToken = typeof passwordResetTokens.$inferInsert;
+export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect;
+export type NewEmailVerificationToken = typeof emailVerificationTokens.$inferInsert;
 export type Complaint = typeof complaints.$inferSelect;
 export type NewComplaint = typeof complaints.$inferInsert;

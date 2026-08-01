@@ -6,7 +6,7 @@ import { conversations, listings } from '~~/server/database/schema';
 const startConversationSchema = z.object({ listingId: z.string().uuid() });
 
 export default defineEventHandler(async event => {
-  const { user } = await requireUserSession(event);
+  const user = await requireVerified(event);
   const { listingId } = await readValidatedBody(event, startConversationSchema.parse);
   const db = useDb();
 

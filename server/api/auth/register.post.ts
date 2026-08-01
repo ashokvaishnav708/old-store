@@ -42,13 +42,18 @@ export default defineEventHandler(async event => {
 
   const name = `${user.firstName} ${user.lastName}`;
 
+  const config = useRuntimeConfig();
+  const rawToken = await createEmailVerificationToken(user.id);
+  await sendVerificationEmail(user.email, `${config.public.baseUrl}/verify-email?token=${rawToken}`);
+
   await setUserSession(event, {
     user: {
       id: user.id,
       name,
       email: user.email,
       avatarUrl: user.avatarUrl,
-      userType: user.userType ?? 'private'
+      userType: user.userType ?? 'private',
+      verified: user.verified ?? false
     }
   });
 
