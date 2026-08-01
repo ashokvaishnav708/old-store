@@ -15,6 +15,27 @@
       "when": 1785059325509,
       "tag": "0001_add_search_index",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785584188693,
+      "tag": "0002_add_staff_roles_marketplace_features",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785584343885,
+      "tag": "0003_backfill_user_names",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1785584363454,
+      "tag": "0004_finalize_user_name_split",
+      "breakpoints": true
     }
   ]
 }

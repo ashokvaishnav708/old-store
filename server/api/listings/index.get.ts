@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, lte, sql, count } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte, sql, count, isNull, gt, or } from 'drizzle-orm';
 import { useDb } from '~~/server/database/client';
 import { listings, listingImages, categories, users } from '~~/server/database/schema';
 import { listingQuerySchema } from '#shared/utils/schemas';
@@ -7,7 +7,10 @@ export default defineEventHandler(async event => {
   const query = await getValidatedQuery(event, listingQuerySchema.parse);
   const db = useDb();
 
-  const conditions = [eq(listings.status, 'active')];
+  const conditions = [
+    eq(listings.status, 'active'),
+    or(isNull(listings.expiresAt), gt(listings.expiresAt, new Date()))
+  ];
 
   if (query.categoryId) conditions.push(eq(listings.categoryId, query.categoryId));
   if (query.condition) conditions.push(eq(listings.condition, query.condition));
@@ -46,7 +49,10 @@ export default defineEventHandler(async event => {
           location: listings.location,
           createdAt: listings.createdAt,
           category: { id: categories.id, name: categories.name, slug: categories.slug },
-          seller: { id: users.id, name: users.name },
+          seller: {
+            id: users.id,
+            name: sql<string>`${users.firstName} || ' ' || ${users.lastName}`
+          },
           thumbnail: sql<string | null>`(
           SELECT ${listingImages.url} FROM ${listingImages}
           WHERE ${listingImages.listingId} = ${listings.id}

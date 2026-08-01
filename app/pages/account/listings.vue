@@ -35,7 +35,14 @@
             <span>{{ t('listing.views', { count: listing.viewCount }) }}</span>
             <span>·</span>
             <span>{{ formatPrice(listing.price, listing.currency) }}</span>
+            <template v-if="listing.status === 'active' && listing.expiresAt">
+              <span>·</span>
+              <span>{{ t('listing.expires_on', { date: new Date(listing.expiresAt).toLocaleDateString() }) }}</span>
+            </template>
           </div>
+          <p v-if="listing.status === 'rejected' && listing.rejectionReason" class="text-sm text-error mt-1">
+            {{ t('admin.rejection_reason_label') }}: {{ listing.rejectionReason }}
+          </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
           <UButton
@@ -65,8 +72,10 @@ const { t } = useI18n();
 const toast = useToast();
 const { data: listings, refresh } = await useFetch<MyListing[]>('/api/listings/mine');
 
-const statusColors: Record<string, 'success' | 'neutral' | 'warning'> = {
+const statusColors: Record<string, 'success' | 'neutral' | 'warning' | 'error'> = {
   active: 'success',
+  pending: 'warning',
+  rejected: 'error',
   sold: 'neutral',
   archived: 'warning',
   draft: 'neutral'

@@ -71,11 +71,16 @@ useSeoMeta({
 const { loggedIn, user, clear } = useUserSession();
 const router = useRouter();
 
+const isStaff = computed(() => user.value?.userType === 'admin' || user.value?.userType === 'assistant');
+
 const accountItems = computed(() => [
   [
     { label: t('nav.my_listings'), icon: 'i-lucide-list', to: '/account/listings' },
     { label: t('nav.favorites'), icon: 'i-lucide-heart', to: '/account/favorites' },
-    { label: t('nav.messages'), icon: 'i-lucide-message-circle', to: '/account/messages' }
+    { label: t('nav.messages'), icon: 'i-lucide-message-circle', to: '/account/messages' },
+    ...(isStaff.value
+      ? [{ label: t('nav.admin'), icon: 'i-lucide-shield', to: '/admin' }]
+      : [])
   ],
   [
     {

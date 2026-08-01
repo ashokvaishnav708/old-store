@@ -19,7 +19,15 @@ export const listingConditionEnum = pgEnum('listing_condition', [
   'use_marks',
   'defect',
 ]);
-export const listingStatusEnum = pgEnum('listing_status', ['active', 'sold', 'archived', 'draft']);
+export const listingStatusEnum = pgEnum('listing_status', [
+  'draft',
+  'pending',
+  'active',
+  'sold',
+  'archived',
+  'rejected'
+]);
+export const listingPlanEnum = pgEnum('listing_plan', ['basic', 'pro', 'ultra']);
 
 export const listings = pgTable(
   'listings',
@@ -37,18 +45,26 @@ export const listings = pgTable(
     price: numeric('price', { precision: 12, scale: 2 }).notNull().default('0'),
     currency: text('currency').notNull().default('EUR'),
     condition: listingConditionEnum('condition').notNull().default('used'),
-    status: listingStatusEnum('status').notNull().default('active'),
+    status: listingStatusEnum('status').notNull().default('pending'),
+    planId: listingPlanEnum('plan_id').notNull().default('basic'),
     location: text('location'),
     latitude: doublePrecision('latitude'),
     longitude: doublePrecision('longitude'),
     viewCount: integer('view_count').notNull().default(0),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    approvedByUserId: uuid('approved_by_user_id').references(() => users.id, {
+      onDelete: 'set null'
+    }),
+    approvedAt: timestamp('approved_at', { withTimezone: true }),
+    rejectionReason: text('rejection_reason'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
   },
   table => [
     index('listings_category_idx').on(table.categoryId),
     index('listings_user_idx').on(table.userId),
-    index('listings_status_created_idx').on(table.status, table.createdAt)
+    index('listings_status_created_idx').on(table.status, table.createdAt),
+    index('listings_status_expires_idx').on(table.status, table.expiresAt)
   ]
 );
 

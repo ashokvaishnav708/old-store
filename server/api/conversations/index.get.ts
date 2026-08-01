@@ -11,7 +11,10 @@ export default defineEventHandler(async event => {
       id: conversations.id,
       createdAt: conversations.createdAt,
       listing: { id: listings.id, title: listings.title, slug: listings.slug },
-      buyer: { id: users.id, name: users.name },
+      buyer: {
+        id: users.id,
+        name: sql<string>`${users.firstName} || ' ' || ${users.lastName}`
+      },
       isSeller: sql<boolean>`${conversations.sellerId} = ${user.id}`,
       lastMessage: sql<string | null>`(
       SELECT ${messages.body} FROM ${messages}

@@ -10,6 +10,7 @@ export default defineEventHandler(async event => {
     const [row] = await db
       .select({
         id: listings.id,
+        userId: listings.userId,
         title: listings.title,
         slug: listings.slug,
         description: listings.description,
@@ -17,6 +18,9 @@ export default defineEventHandler(async event => {
         currency: listings.currency,
         condition: listings.condition,
         status: listings.status,
+        planId: listings.planId,
+        expiresAt: listings.expiresAt,
+        rejectionReason: listings.rejectionReason,
         location: listings.location,
         latitude: listings.latitude,
         longitude: listings.longitude,
@@ -25,7 +29,7 @@ export default defineEventHandler(async event => {
         category: { id: categories.id, name: categories.name, slug: categories.slug },
         seller: {
           id: users.id,
-          name: users.name,
+          name: sql<string>`${users.firstName} || ' ' || ${users.lastName}`,
           avatarUrl: users.avatarUrl,
           createdAt: users.createdAt
         }
@@ -49,6 +53,18 @@ export default defineEventHandler(async event => {
 
   if (!listing) {
     throw createError({ statusCode: 404, statusMessage: 'Listing not found.' });
+  }
+
+  const isExpired = listing.expiresAt !== null && new Date(listing.expiresAt) <= new Date();
+  const isPubliclyVisible = listing.status === 'active' && !isExpired;
+
+  if (!isPubliclyVisible) {
+    const session = await getUserSession(event);
+    const isOwner = session.user?.id === listing.userId;
+    const isStaff = session.user?.userType === 'admin' || session.user?.userType === 'assistant';
+    if (!isOwner && !isStaff) {
+      throw createError({ statusCode: 404, statusMessage: 'Listing not found.' });
+    }
   }
 
   // Kept out of the cached payload above so it doesn't go stale with the TTL.

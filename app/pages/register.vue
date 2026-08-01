@@ -28,10 +28,17 @@ const { fetch: refreshSession } = useUserSession();
 
 const fields = computed(() => [
   {
-    name: 'name',
+    name: 'firstName',
     type: 'text' as const,
-    label: t('auth.name_label'),
-    placeholder: t('auth.name_placeholder'),
+    label: t('auth.first_name_label'),
+    placeholder: t('auth.first_name_placeholder'),
+    required: true
+  },
+  {
+    name: 'lastName',
+    type: 'text' as const,
+    label: t('auth.last_name_label'),
+    placeholder: t('auth.last_name_placeholder'),
     required: true
   },
   {

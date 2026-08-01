@@ -13,6 +13,11 @@
         {{ t('auth.sign_up_prompt') }}
         <ULink to="/register" class="text-primary font-medium">{{ t('auth.sign_up_link') }}</ULink>
       </template>
+      <template #footer>
+        <ULink to="/forgot-password" class="text-sm text-dimmed hover:text-primary">
+          {{ t('auth.forgot_password_link') }}
+        </ULink>
+      </template>
     </UAuthForm>
   </UContainer>
 </template>

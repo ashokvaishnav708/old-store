@@ -64,8 +64,27 @@
         />
       </UFormField>
 
+      <UFormField :label="t('listing.plan_label')" :description="t('listing.plan_description')">
+        <div class="grid grid-cols-3 gap-2">
+          <button
+            v-for="p in listingPlans"
+            :key="p"
+            type="button"
+            class="rounded-lg border p-3 text-left transition"
+            :class="plan === p ? 'border-primary ring-1 ring-primary' : 'border-default'"
+            @click="plan = p"
+          >
+            <p class="font-medium text-highlighted">{{ t(`listing.plan_${p}`) }}</p>
+            <p class="text-sm text-dimmed">
+              {{ planPrices[p] === 0 ? t('listing.plan_free') : formatPrice(planPrices[p]) }}
+            </p>
+            <p class="text-xs text-dimmed">{{ t('listing.plan_days', { days: planDurationDays[p] }) }}</p>
+          </button>
+        </div>
+      </UFormField>
+
       <UButton type="submit" block size="lg" :loading="submitting">
-        {{ t('listing.publish') }}
+        {{ plan === 'basic' ? t('listing.publish') : t('listing.pay_and_publish') }}
       </UButton>
     </UForm>
   </UContainer>
@@ -75,6 +94,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { listingSchema, type ListingInput } from '#shared/utils/schemas';
 import type { ListingDetail } from '#shared/types/models';
+import { listingPlans, planPrices, planDurationDays, type ListingPlan } from '#shared/utils/plans';
 
 definePageMeta({ middleware: 'auth' });
 
@@ -90,8 +110,11 @@ const conditionOptions = computed(() => [
   { label: t('conditions.new'), value: 'new' },
   { label: t('conditions.like_new'), value: 'like_new' },
   { label: t('conditions.used'), value: 'used' },
-  { label: t('conditions.for_parts'), value: 'for_parts' }
+  { label: t('conditions.use_marks'), value: 'use_marks' },
+  { label: t('conditions.defect'), value: 'defect' }
 ]);
+
+const plan = ref<ListingPlan>('basic');
 
 const state = reactive<Partial<ListingInput>>({
   title: '',
@@ -118,6 +141,14 @@ async function onSubmit(event: FormSubmitEvent<ListingInput>) {
       const formData = new FormData();
       for (const file of images.value) formData.append('images', file);
       await $fetch(`/api/listings/${listing.id}/images`, { method: 'POST', body: formData });
+    }
+
+    if (plan.value !== 'basic') {
+      const payment = await $fetch('/api/payments', {
+        method: 'POST',
+        body: { listingId: listing.id, plan: plan.value }
+      });
+      await $fetch(`/api/payments/${payment.id}/confirm`, { method: 'POST' });
     }
 
     toast.add({ title: t('listing.publish_success'), color: 'success' });

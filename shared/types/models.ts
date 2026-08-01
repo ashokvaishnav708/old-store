@@ -23,6 +23,7 @@ export interface ListingSummary {
 
 export interface ListingDetail {
   id: string;
+  userId: string;
   title: string;
   slug: string;
   description: string;
@@ -30,6 +31,9 @@ export interface ListingDetail {
   currency: string;
   condition: string;
   status: string;
+  planId: string;
+  expiresAt: string | null;
+  rejectionReason: string | null;
   location: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -47,6 +51,9 @@ export interface MyListing {
   price: string;
   currency: string;
   status: string;
+  planId: string;
+  expiresAt: string | null;
+  rejectionReason: string | null;
   viewCount: number;
   createdAt: string;
   category: { id: string; name: string };
@@ -88,4 +95,74 @@ export interface MessageItem {
   body: string;
   readAt: string | null;
   createdAt: string;
+}
+
+export interface AdminListingSummary {
+  id: string;
+  title: string;
+  slug: string;
+  price: string;
+  currency: string;
+  status: string;
+  planId: string;
+  rejectionReason: string | null;
+  createdAt: string;
+  category: { id: string; name: string };
+  seller: { id: string; name: string; email: string };
+}
+
+export interface AdminListingPage {
+  items: AdminListingSummary[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface AdminComplaint {
+  id: string;
+  reason: string;
+  details: string | null;
+  status: string;
+  resolutionNote: string | null;
+  createdAt: string;
+  handledAt: string | null;
+  reporter: { id: string; name: string };
+  targetListing: { id: string; title: string; slug: string } | null;
+  targetUserId: string | null;
+}
+
+export interface AdminAssistant {
+  id: string;
+  name: string;
+  email: string;
+  bannedAt: string | null;
+  bannedReason: string | null;
+  createdAt: string;
+}
+
+export interface AdminUserSearchResult {
+  id: string;
+  name: string;
+  email: string;
+  userType: string;
+  bannedAt: string | null;
+  bannedReason: string | null;
+  createdAt: string;
+}
+
+export interface AdminConversationThread {
+  buyerId: string;
+  sellerId: string;
+  messages: MessageItem[];
+}
+
+export interface AdminConversationSummary {
+  id: string;
+  createdAt: string;
+  listing: { id: string; title: string; slug: string };
+  buyer: { id: string; name: string };
+  seller: { id: string; name: string };
+  lastMessage: string | null;
+  lastMessageAt: string | null;
 }

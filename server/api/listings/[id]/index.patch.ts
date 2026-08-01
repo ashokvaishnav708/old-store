@@ -11,7 +11,9 @@ export default defineEventHandler(async event => {
 
   const existing = await db.query.listings.findFirst({ where: eq(listings.id, id) });
   if (!existing) throw createError({ statusCode: 404, statusMessage: 'Listing not found.' });
-  if (existing.userId !== user.id)
+
+  const isStaff = user.userType === 'admin' || user.userType === 'assistant';
+  if (existing.userId !== user.id && !isStaff)
     throw createError({ statusCode: 403, statusMessage: 'Not your listing.' });
 
   if (body.categoryId) {

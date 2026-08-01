@@ -14,6 +14,9 @@ export default defineEventHandler(async event => {
       price: listings.price,
       currency: listings.currency,
       status: listings.status,
+      planId: listings.planId,
+      expiresAt: listings.expiresAt,
+      rejectionReason: listings.rejectionReason,
       viewCount: listings.viewCount,
       createdAt: listings.createdAt,
       category: { id: categories.id, name: categories.name }

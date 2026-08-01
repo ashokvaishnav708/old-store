@@ -34,7 +34,9 @@ export default defineEventHandler(async event => {
       condition: body.condition,
       location: body.location,
       latitude: body.latitude,
-      longitude: body.longitude
+      longitude: body.longitude,
+      status: 'pending',
+      planId: 'basic'
     })
     .returning();
 

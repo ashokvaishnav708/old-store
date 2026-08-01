@@ -19,9 +19,21 @@ export default defineEventHandler(async event => {
   const valid = await verifyPassword(user.passwordHash, body.password);
   if (!valid) throw invalidCredentials();
 
+  if (user.bannedAt) {
+    throw createError({ statusCode: 403, statusMessage: 'This account has been banned.' });
+  }
+
+  const name = `${user.firstName} ${user.lastName}`;
+
   await setUserSession(event, {
-    user: { id: user.id, name: user.name, email: user.email, avatarUrl: user.avatarUrl }
+    user: {
+      id: user.id,
+      name,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+      userType: user.userType ?? 'private'
+    }
   });
 
-  return { id: user.id, name: user.name, email: user.email };
+  return { id: user.id, name, email: user.email };
 });

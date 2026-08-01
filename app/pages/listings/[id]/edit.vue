@@ -21,6 +21,32 @@
       </div>
     </div>
 
+    <UCard class="mb-6">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <p class="text-sm text-dimmed">{{ t('listing.plan_label') }}</p>
+          <p class="font-medium text-highlighted">
+            {{ t(`listing.plan_${listing.planId}`) }}
+            <span v-if="listing.expiresAt" class="text-sm text-dimmed font-normal">
+              · {{ t('listing.expires_on', { date: new Date(listing.expiresAt).toLocaleDateString() }) }}
+            </span>
+          </p>
+        </div>
+        <div v-if="upgradeOptions.length" class="flex gap-2">
+          <UButton
+            v-for="p in upgradeOptions"
+            :key="p"
+            size="sm"
+            variant="subtle"
+            :loading="upgrading === p"
+            @click="upgradePlan(p)"
+          >
+            {{ t('listing.upgrade_to', { plan: t(`listing.plan_${p}`) }) }}
+          </UButton>
+        </div>
+      </div>
+    </UCard>
+
     <UForm :schema="listingUpdateSchema" :state="state" class="space-y-4" @submit="onSubmit">
       <UFormField :label="t('listing.title_label')" name="title" required>
         <UInput v-model="state.title" class="w-full" />
@@ -30,9 +56,19 @@
         <USelect v-model="state.categoryId" :items="categoryOptions" class="w-full" />
       </UFormField>
 
-      <UFormField :label="t('listing.status_label')" name="status" required>
+      <UFormField
+        v-if="listing.status === 'active' || listing.status === 'sold' || listing.status === 'archived'"
+        :label="t('listing.status_label')"
+        name="status"
+      >
         <USelect v-model="state.status" :items="statusOptions" class="w-full" />
       </UFormField>
+      <p v-else-if="listing.status === 'pending'" class="text-sm text-dimmed">
+        {{ t('listing.pending_review_notice') }}
+      </p>
+      <p v-else-if="listing.status === 'rejected'" class="text-sm text-error">
+        {{ t('admin.rejection_reason_label') }}: {{ listing.rejectionReason }}
+      </p>
 
       <UFormField :label="t('listing.condition_label')" name="condition" required>
         <USelect v-model="state.condition" :items="conditionOptions" class="w-full" />
@@ -76,6 +112,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { listingUpdateSchema, type ListingUpdateInput } from '#shared/utils/schemas';
 import type { ListingDetail } from '#shared/types/models';
+import type { ListingPlan } from '#shared/utils/plans';
 
 definePageMeta({ middleware: 'auth' });
 
@@ -99,10 +136,10 @@ const conditionOptions = computed(() => [
   { label: t('conditions.new'), value: 'new' },
   { label: t('conditions.like_new'), value: 'like_new' },
   { label: t('conditions.used'), value: 'used' },
-  { label: t('conditions.for_parts'), value: 'for_parts' }
+  { label: t('conditions.use_marks'), value: 'use_marks' },
+  { label: t('conditions.defect'), value: 'defect' }
 ]);
 const statusOptions = computed(() => [
-  { label: t('statuses.active'), value: 'active' },
   { label: t('statuses.sold'), value: 'sold' },
   { label: t('statuses.archived'), value: 'archived' }
 ]);
@@ -115,12 +152,39 @@ const state = reactive<Partial<ListingUpdateInput>>({
   condition: listing.value.condition as ListingUpdateInput['condition'],
   categoryId: listing.value.category.id,
   location: listing.value.location || '',
-  status: listing.value.status as ListingUpdateInput['status']
+  status:
+    listing.value.status === 'sold' || listing.value.status === 'archived'
+      ? (listing.value.status as ListingUpdateInput['status'])
+      : undefined
 });
 
 const newImages = ref<File[]>([]);
 const submitting = ref(false);
 const deletingImage = ref<string | null>(null);
+
+const planOrder: ListingPlan[] = ['basic', 'pro', 'ultra'];
+const upgradeOptions = computed<ListingPlan[]>(() => {
+  const currentIndex = planOrder.indexOf(listing.value!.planId as ListingPlan);
+  return planOrder.slice(currentIndex + 1);
+});
+
+const upgrading = ref<ListingPlan | null>(null);
+async function upgradePlan(plan: ListingPlan) {
+  upgrading.value = plan;
+  try {
+    const payment = await $fetch('/api/payments', {
+      method: 'POST',
+      body: { listingId: listing.value!.id, plan }
+    });
+    await $fetch(`/api/payments/${payment.id}/confirm`, { method: 'POST' });
+    toast.add({ title: t('listing.plan_upgraded'), color: 'success' });
+    await refreshNuxtData();
+  } catch (err) {
+    toast.add({ title: t('listing.update_error'), description: getErrorMessage(err), color: 'error' });
+  } finally {
+    upgrading.value = null;
+  }
+}
 
 async function removeImage(imageId: string) {
   deletingImage.value = imageId;

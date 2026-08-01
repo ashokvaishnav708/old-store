@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import { Hash } from '@adonisjs/hash';
+import { Scrypt } from '@adonisjs/hash/drivers/scrypt';
 import * as schema from './schema';
 
 const sql = postgres(process.env.DATABASE_URL!);
@@ -27,6 +29,33 @@ function slugify(value: string) {
     .replace(/(^-|-$)/g, '');
 }
 
+async function seedAdmin() {
+  if (process.env.NODE_ENV === 'production' && !process.env.SEED_ADMIN_EMAIL) return;
+
+  const email = process.env.SEED_ADMIN_EMAIL || 'admin@oldstore.local';
+  const password = process.env.SEED_ADMIN_PASSWORD || 'admin1234';
+
+  // Mirrors nuxt-auth-utils' hashPassword/verifyPassword (both wrap
+  // @adonisjs/hash with the Scrypt driver and no config overrides), but this
+  // script runs standalone via tsx, outside the Nitro runtime, so it can't
+  // use the `#imports`-based `useRuntimeConfig()` those helpers depend on.
+  const hash = new Hash(new Scrypt({}));
+  const passwordHash = await hash.make(password);
+
+  await db
+    .insert(schema.users)
+    .values({
+      email,
+      passwordHash,
+      firstName: 'Admin',
+      lastName: 'User',
+      userType: 'admin'
+    })
+    .onConflictDoNothing({ target: schema.users.email });
+
+  console.log(`Seeded admin account: ${email} / ${password}`);
+}
+
 async function main() {
   console.log('Seeding categories...');
 
@@ -43,6 +72,8 @@ async function main() {
   }
 
   console.log(`Seeded ${CATEGORIES.length} categories.`);
+
+  await seedAdmin();
   await sql.end();
 }
 

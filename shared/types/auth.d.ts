@@ -4,6 +4,7 @@ declare module '#auth-utils' {
     name: string;
     email: string;
     avatarUrl?: string | null;
+    userType: 'admin' | 'assistant' | 'private' | 'organisation';
   }
 }
 

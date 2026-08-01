@@ -75,6 +75,32 @@
               >
                 {{ isFavorite ? t('listing.remove_favorite') : t('listing.save_to_favorites') }}
               </UButton>
+              <UButton
+                block
+                color="neutral"
+                variant="ghost"
+                icon="i-lucide-flag"
+                @click="showReportForm = !showReportForm"
+              >
+                {{ t('listing.report_action') }}
+              </UButton>
+              <form v-if="showReportForm" class="space-y-2" @submit.prevent="submitReport">
+                <UInput
+                  v-model="reportReason"
+                  class="w-full"
+                  :placeholder="t('complaints.reason_placeholder')"
+                  required
+                />
+                <UTextarea
+                  v-model="reportDetails"
+                  class="w-full"
+                  :rows="3"
+                  :placeholder="t('complaints.details_placeholder')"
+                />
+                <UButton type="submit" block size="sm" :loading="reporting">
+                  {{ t('complaints.submit') }}
+                </UButton>
+              </form>
             </template>
             <template v-else>
               <UButton block icon="i-lucide-pencil" :to="`/listings/${listing.id}/edit`">
@@ -182,4 +208,32 @@ async function deleteListing() {
 }
 
 const activeImage = ref(0);
+
+const showReportForm = ref(false);
+const reportReason = ref('');
+const reportDetails = ref('');
+const reporting = ref(false);
+async function submitReport() {
+  if (!loggedIn.value) return router.push({ path: '/login', query: { redirect: route.fullPath } });
+  if (!reportReason.value.trim()) return;
+  reporting.value = true;
+  try {
+    await $fetch('/api/complaints', {
+      method: 'POST',
+      body: {
+        targetListingId: listing.value!.id,
+        reason: reportReason.value,
+        details: reportDetails.value || undefined
+      }
+    });
+    toast.add({ title: t('complaints.submitted'), color: 'success' });
+    showReportForm.value = false;
+    reportReason.value = '';
+    reportDetails.value = '';
+  } catch (err) {
+    toast.add({ title: t('complaints.submit_error'), description: getErrorMessage(err), color: 'error' });
+  } finally {
+    reporting.value = false;
+  }
+}
 </script>

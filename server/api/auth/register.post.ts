@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { useDb } from '~~/server/database/client';
-import { users } from '~~/server/database/schema';
+import { users, bannedEmails } from '~~/server/database/schema';
 import { registerSchema } from '#shared/utils/schemas';
 
 export default defineEventHandler(async event => {
@@ -18,11 +18,19 @@ export default defineEventHandler(async event => {
     });
   }
 
+  const banned = await db.query.bannedEmails.findFirst({
+    where: eq(bannedEmails.email, body.email)
+  });
+  if (banned) {
+    throw createError({ statusCode: 403, statusMessage: 'This email is not allowed to register.' });
+  }
+
   const passwordHash = await hashPassword(body.password);
   const [user] = await db
     .insert(users)
     .values({
-      name: body.name,
+      firstName: body.firstName,
+      lastName: body.lastName,
       email: body.email,
       passwordHash
     })
@@ -32,9 +40,17 @@ export default defineEventHandler(async event => {
     throw createError({ statusCode: 500, statusMessage: 'Failed to create account.' });
   }
 
+  const name = `${user.firstName} ${user.lastName}`;
+
   await setUserSession(event, {
-    user: { id: user.id, name: user.name, email: user.email, avatarUrl: user.avatarUrl }
+    user: {
+      id: user.id,
+      name,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+      userType: user.userType ?? 'private'
+    }
   });
 
-  return { id: user.id, name: user.name, email: user.email };
+  return { id: user.id, name, email: user.email };
 });

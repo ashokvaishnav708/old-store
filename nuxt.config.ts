@@ -19,8 +19,16 @@ export default defineNuxtConfig({
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
       publicUrl: process.env.S3_PUBLIC_URL
     },
+    smtp: {
+      host: process.env.SMTP_HOST || 'localhost',
+      port: process.env.SMTP_PORT || '1025',
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+      from: process.env.SMTP_FROM || 'noreply@oldstore.local'
+    },
     public: {
-      appName: 'Old Store'
+      appName: 'Old Store',
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     }
   },
 
@@ -40,6 +48,14 @@ export default defineNuxtConfig({
         driver: 'redis',
         url: process.env.REDIS_URL
       }
+    },
+    experimental: {
+      tasks: true
+    },
+    // Runs in-process (no external cron needed) for the node-server preset
+    // this app deploys as. See server/tasks/listings/expire.ts.
+    scheduledTasks: {
+      '*/15 * * * *': ['listings:expire']
     }
   },
 

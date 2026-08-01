@@ -217,10 +217,10 @@ i18n/locales/en.json        UI strings (add another locale file to translate)
 ### 1. Start the backing services
 
 ```bash
-docker compose up -d postgres redis minio minio-init
+docker compose up -d postgres redis minio minio-init mailpit
 ```
 
-This starts PostgreSQL, Redis, MinIO, and creates/exposes the `listings` bucket.
+This starts PostgreSQL, Redis, MinIO (creates/exposes the `listings` bucket), and Mailpit — a local SMTP catcher for outgoing email (password resets); view what it received at http://localhost:8025.
 
 ### 2. Configure environment
 
@@ -274,5 +274,11 @@ See `.env.example` for the full list with defaults matching `docker-compose.yml`
 - `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` — object storage credentials (server-side upload path)
 - `S3_PUBLIC_URL` — base URL used to build image links returned to the browser (can differ from `S3_ENDPOINT`, e.g. behind a CDN)
 - `NUXT_SESSION_PASSWORD` — 32+ char secret used to seal session cookies; generate with `openssl rand -base64 32`
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — outgoing mail (password resets); defaults target the local Mailpit container, swap for a real SMTP provider in prod
+- `NUXT_PUBLIC_BASE_URL` — base URL used to build links in outgoing emails (e.g. the password reset link)
 
 When running via `docker compose`, the `app`/`migrate`/`seed` services set their own container-network values (`postgres`, `redis`, `minio` hostnames) directly in `docker-compose.yml` rather than reading `.env`, since that file is tuned for host-based `npm run dev`.
+
+## Background jobs
+
+Expired listings (past their plan's timer) are deleted by a Nitro scheduled task (`server/tasks/listings/expire.ts`, every 15 minutes) — this runs in-process via Nitro's built-in scheduler, so no external cron is needed, in both `npm run dev` and the plain `node .output/server/index.mjs` production deploy. It only runs while that Node process is alive; a listing read endpoint also filters out anything past its `expiresAt` as a safety net for the gap between expiry and the next tick. Running multiple instances of the app is safe — the delete is keyed by an already-passed `expiresAt`, so a double-run is a no-op.
