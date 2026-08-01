@@ -54,7 +54,9 @@ export default defineEventHandler(async event => {
       avatarUrl: user.avatarUrl,
       userType: user.userType ?? 'private',
       verified: user.verified ?? false,
-      listingLimit: user.listingLimit
+      listingLimit: user.listingLimit,
+      userSubscription: user.userSubscription ?? 'basic',
+      subscriptionExpiresAt: user.subscriptionExpiresAt?.toISOString() ?? null
     }
   });
 

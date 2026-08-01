@@ -1,12 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { useDb } from '~~/server/database/client';
-import { listings } from '~~/server/database/schema';
+import { listings, users } from '~~/server/database/schema';
 import { expiryFromNow, type ListingPlan } from '#shared/utils/plans';
 import { boostExpiryFromNow, type AdvertisingBoost } from '#shared/utils/boosts';
+import { subscriptionExpiryFromNow, type PaidSubscriptionTier } from '#shared/utils/subscriptions';
 
 export interface CreateIntentInput {
-  listingId: string;
+  // Absent for account-level purchases (e.g. a subscription upgrade) that
+  // aren't tied to any one listing.
+  listingId?: string;
   userId: string;
   amount: number;
   currency: string;
@@ -97,4 +100,19 @@ export async function applyBoostToListing(listingId: string, boost: AdvertisingB
   }
 
   await invalidate(`listing:${listingId}`, 'listings:list:*', 'listings:featured');
+}
+
+/**
+ * Upgrades (or renews) a user's account subscription. Always overwrites the
+ * tier and resets the expiry to a fresh 30 days from now — buying again
+ * doesn't stack duration, it just renews/replaces the current upgrade.
+ */
+export async function applySubscriptionToUser(userId: string, tier: PaidSubscriptionTier) {
+  const db = useDb();
+  await db
+    .update(users)
+    .set({ userSubscription: tier, subscriptionExpiresAt: subscriptionExpiryFromNow(), updatedAt: new Date() })
+    .where(eq(users.id, userId));
+
+  await invalidate(`user:session-sync:${userId}`);
 }

@@ -7,6 +7,8 @@ declare module '#auth-utils' {
     userType: 'admin' | 'assistant' | 'private' | 'organisation';
     verified: boolean;
     listingLimit: number;
+    userSubscription: 'basic' | 'advanced' | 'advanced_plus';
+    subscriptionExpiresAt: string | null;
   }
 }
 

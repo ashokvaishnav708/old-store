@@ -57,6 +57,13 @@
       "when": 1785590839513,
       "tag": "0007_add_advertising_boosts",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1785592103751,
+      "tag": "0008_add_account_subscriptions",
+      "breakpoints": true
     }
   ]
 }

@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { useDb } from '~~/server/database/client';
 import { listings, categories, users } from '~~/server/database/schema';
 import { listingSchema } from '#shared/utils/schemas';
+import { effectiveListingLimit } from '#shared/utils/subscriptions';
 
 export default defineEventHandler(async event => {
   const sessionUser = await requireVerified(event);
@@ -27,11 +28,12 @@ export default defineEventHandler(async event => {
     .from(listings)
     .where(and(eq(listings.userId, user.id), inArray(listings.status, ['pending', 'active'])));
   const activeCount = activeCountRow?.activeCount ?? 0;
+  const limit = effectiveListingLimit(user);
 
-  if (activeCount >= user.listingLimit) {
+  if (activeCount >= limit) {
     throw createError({
       statusCode: 422,
-      statusMessage: `You've reached your listing limit (${user.listingLimit}). Wait for a listing to sell or be archived, or contact support to raise your limit.`
+      statusMessage: `You've reached your listing limit (${limit}). Delete or wait for a listing to sell/archive, or upgrade your account in My Profile.`
     });
   }
 

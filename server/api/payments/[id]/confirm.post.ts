@@ -28,9 +28,11 @@ export default defineEventHandler(async event => {
     .returning();
 
   if (result.succeeded) {
-    if (payment.kind === 'boost' && payment.boost) {
+    if (payment.kind === 'subscription' && payment.subscriptionTier) {
+      await applySubscriptionToUser(payment.userId, payment.subscriptionTier);
+    } else if (payment.kind === 'boost' && payment.boost && payment.listingId) {
       await applyBoostToListing(payment.listingId, payment.boost);
-    } else if (payment.plan) {
+    } else if (payment.plan && payment.listingId) {
       await applyPlanToListing(payment.listingId, payment.plan);
     }
   }

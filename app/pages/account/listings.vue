@@ -11,8 +11,9 @@
       </UButton>
     </div>
     <p class="text-sm mb-6" :class="atLimit ? 'text-warning' : 'text-dimmed'">
-      {{ t('account.listing_quota', { used: activeCount, limit: user?.listingLimit ?? 5 }) }}
+      {{ t('account.listing_quota', { used: activeCount, limit: currentLimit }) }}
       <span v-if="atLimit"> — {{ t('account.listing_quota_reached') }}</span>
+      <ULink to="/account/profile" class="text-primary ms-1">{{ t('account.upgrade_link') }}</ULink>
     </p>
 
     <UEmpty
@@ -75,6 +76,7 @@
 
 <script setup lang="ts">
 import type { MyListing } from '#shared/types/models';
+import { effectiveListingLimit } from '#shared/utils/subscriptions';
 
 definePageMeta({ middleware: 'auth' });
 
@@ -86,7 +88,8 @@ const { data: listings, refresh } = await useFetch<MyListing[]>('/api/listings/m
 const activeCount = computed(
   () => listings.value?.filter(l => l.status === 'pending' || l.status === 'active').length ?? 0
 );
-const atLimit = computed(() => activeCount.value >= (user.value?.listingLimit ?? 5));
+const currentLimit = computed(() => (user.value ? effectiveListingLimit(user.value) : 5));
+const atLimit = computed(() => activeCount.value >= currentLimit.value);
 
 const statusColors: Record<string, 'success' | 'neutral' | 'warning' | 'error'> = {
   active: 'success',

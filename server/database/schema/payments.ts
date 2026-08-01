@@ -2,24 +2,25 @@ import { pgTable, uuid, text, numeric, timestamp, index } from 'drizzle-orm/pg-c
 import { users } from './users';
 import { listings } from './listings';
 
-export type PaymentKind = 'plan' | 'boost';
+export type PaymentKind = 'plan' | 'boost' | 'subscription';
 export type PaymentPlan = 'basic' | 'pro' | 'ultra';
 export type PaymentBoost = 'highlight' | 'top_placement' | 'homepage';
+export type PaymentSubscriptionTier = 'advanced' | 'advanced_plus';
 export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'canceled';
 
 export const payments = pgTable(
   'payments',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    listingId: uuid('listing_id')
-      .notNull()
-      .references(() => listings.id, { onDelete: 'cascade' }),
+    // Nullable: subscription-kind payments aren't tied to any one listing.
+    listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'cascade' }),
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     kind: text('kind').$type<PaymentKind>().notNull().default('plan'),
     plan: text('plan').$type<PaymentPlan>(),
     boost: text('boost').$type<PaymentBoost>(),
+    subscriptionTier: text('subscription_tier').$type<PaymentSubscriptionTier>(),
     amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
     currency: text('currency').notNull().default('EUR'),
     provider: text('provider').notNull().default('mock'),

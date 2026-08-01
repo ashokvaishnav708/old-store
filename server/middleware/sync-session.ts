@@ -9,6 +9,8 @@ interface SessionSnapshot {
   userType: 'admin' | 'assistant' | 'private' | 'organisation';
   verified: boolean;
   listingLimit: number;
+  userSubscription: 'basic' | 'advanced' | 'advanced_plus';
+  subscriptionExpiresAt: string | null;
 }
 
 /**
@@ -38,7 +40,9 @@ export default defineEventHandler(async event => {
       avatarUrl: user.avatarUrl,
       userType: user.userType ?? 'private',
       verified: user.verified ?? false,
-      listingLimit: user.listingLimit
+      listingLimit: user.listingLimit,
+      userSubscription: user.userSubscription ?? 'basic',
+      subscriptionExpiresAt: user.subscriptionExpiresAt?.toISOString() ?? null
     };
   });
 
@@ -47,13 +51,16 @@ export default defineEventHandler(async event => {
     throw createError({ statusCode: 403, statusMessage: 'This account has been banned.' });
   }
 
-  const { name, avatarUrl, userType, verified, listingLimit } = session.user;
+  const { name, avatarUrl, userType, verified, listingLimit, userSubscription, subscriptionExpiresAt } =
+    session.user;
   if (
     name !== snapshot.name ||
     avatarUrl !== snapshot.avatarUrl ||
     userType !== snapshot.userType ||
     verified !== snapshot.verified ||
-    listingLimit !== snapshot.listingLimit
+    listingLimit !== snapshot.listingLimit ||
+    userSubscription !== snapshot.userSubscription ||
+    subscriptionExpiresAt !== snapshot.subscriptionExpiresAt
   ) {
     await setUserSession(event, {
       user: {
@@ -62,7 +69,9 @@ export default defineEventHandler(async event => {
         avatarUrl: snapshot.avatarUrl,
         userType: snapshot.userType,
         verified: snapshot.verified,
-        listingLimit: snapshot.listingLimit
+        listingLimit: snapshot.listingLimit,
+        userSubscription: snapshot.userSubscription,
+        subscriptionExpiresAt: snapshot.subscriptionExpiresAt
       }
     });
   }

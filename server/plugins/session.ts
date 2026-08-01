@@ -18,5 +18,7 @@ export default defineNitroPlugin(() => {
     session.user.userType = user.userType ?? 'private';
     session.user.verified = user.verified ?? false;
     session.user.listingLimit = user.listingLimit;
+    session.user.userSubscription = user.userSubscription ?? 'basic';
+    session.user.subscriptionExpiresAt = user.subscriptionExpiresAt?.toISOString() ?? null;
   });
 });

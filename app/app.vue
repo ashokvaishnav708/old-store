@@ -140,6 +140,7 @@ const isStaff = computed(() => user.value?.userType === 'admin' || user.value?.u
 
 const accountItems = computed(() => [
   [
+    { label: t('nav.my_profile'), icon: 'i-lucide-user', to: '/account/profile' },
     { label: t('nav.my_listings'), icon: 'i-lucide-list', to: '/account/listings' },
     { label: t('nav.favorites'), icon: 'i-lucide-heart', to: '/account/favorites' },
     { label: t('nav.messages'), icon: 'i-lucide-message-circle', to: '/account/messages' },
