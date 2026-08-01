@@ -28,7 +28,16 @@ export default defineNuxtConfig({
     },
     public: {
       appName: 'Old Store',
-      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+      adsense: {
+        // Google AdSense publisher ID (ca-pub-XXXXXXXXXXXXXXXX). Ad units are
+        // disabled entirely when this is unset, e.g. in local dev.
+        clientId: process.env.NUXT_PUBLIC_ADSENSE_CLIENT_ID || '',
+        // Ad unit slot IDs, created per-placement in the AdSense dashboard.
+        slotSidebar: process.env.NUXT_PUBLIC_ADSENSE_SLOT_SIDEBAR || '',
+        slotInFeed: process.env.NUXT_PUBLIC_ADSENSE_SLOT_IN_FEED || '',
+        slotInContent: process.env.NUXT_PUBLIC_ADSENSE_SLOT_IN_CONTENT || ''
+      }
     }
   },
 

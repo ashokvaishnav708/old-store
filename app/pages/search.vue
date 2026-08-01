@@ -46,9 +46,11 @@
           <USkeleton v-for="i in 6" :key="i" class="h-56 w-full" />
         </div>
 
-        <div v-else-if="listingsPage?.items.length" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <ListingCard v-for="listing in listingsPage.items" :key="listing.id" :listing="listing" />
-        </div>
+        <ListingGrid
+          v-else-if="listingsPage?.items.length"
+          :listings="listingsPage.items"
+          grid-class="grid grid-cols-2 sm:grid-cols-3 gap-4"
+        />
 
         <UEmpty
           v-else

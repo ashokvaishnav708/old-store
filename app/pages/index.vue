@@ -35,18 +35,11 @@
       :title="t('home.featured_title')"
       :ui="{ container: 'gap-6' }"
     >
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        <ListingCard v-for="listing in featured" :key="listing.id" :listing="listing" />
-      </div>
+      <ListingGrid :listings="featured" />
     </UPageSection>
 
     <UPageSection :title="t('home.recently_listed')" :ui="{ container: 'gap-6' }">
-      <div
-        v-if="listingsPage?.items.length"
-        class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
-      >
-        <ListingCard v-for="listing in listingsPage.items" :key="listing.id" :listing="listing" />
-      </div>
+      <ListingGrid v-if="listingsPage?.items.length" :listings="listingsPage.items" />
       <UEmpty
         v-else
         icon="i-lucide-package-search"

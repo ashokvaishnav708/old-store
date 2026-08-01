@@ -97,6 +97,19 @@
       </template>
     </UAlert>
 
+    <GoogleAd
+      placement="sidebar"
+      format="vertical"
+      container-class="hidden min-[1780px]:block fixed top-1/2 left-4 z-40 w-40 -translate-y-1/2"
+      min-height="600px"
+    />
+    <GoogleAd
+      placement="sidebar"
+      format="vertical"
+      container-class="hidden min-[1780px]:block fixed top-1/2 right-4 z-40 w-40 -translate-y-1/2"
+      min-height="600px"
+    />
+
     <UMain>
       <NuxtPage />
     </UMain>
@@ -117,13 +130,23 @@
 import type { NotificationItem } from '#shared/types/models';
 
 const { t, locale } = useI18n();
+const { public: publicConfig } = useRuntimeConfig();
 
 useHead({
   meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
   link: [{ rel: 'icon', href: '/favicon.ico' }],
   htmlAttrs: {
     lang: locale
-  }
+  },
+  script: publicConfig.adsense.clientId
+    ? [
+        {
+          src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publicConfig.adsense.clientId}`,
+          async: true,
+          crossorigin: 'anonymous'
+        }
+      ]
+    : []
 });
 
 useSeoMeta({

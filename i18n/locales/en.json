@@ -3,6 +3,9 @@
     "name": "Old Store",
     "description": "A local classifieds marketplace to buy and sell almost anything."
   },
+  "ads": {
+    "label": "Advertisement"
+  },
   "nav": {
     "search_placeholder": "Search for anything…",
     "post_ad": "Post an ad",

@@ -25,11 +25,25 @@
           </button>
         </div>
 
+        <div v-if="listing.images.length" class="space-y-4">
+          <template v-for="entry in galleryEntries" :key="entry.key">
+            <img
+              v-if="entry.image"
+              :src="entry.image.url"
+              :alt="listing.title"
+              class="w-full rounded-lg object-contain"
+            />
+            <GoogleAd v-else placement="in-content" format="fluid" layout="in-article" min-height="250px" />
+          </template>
+        </div>
+
         <UPageSection :title="t('listing.description_label')" :ui="{ container: 'py-4' }">
           <p class="whitespace-pre-line text-toned">
             {{ listing.description }}
           </p>
         </UPageSection>
+
+        <GoogleAd placement="in-content" format="fluid" layout="in-article" min-height="250px" />
       </div>
 
       <div class="space-y-4">
@@ -226,6 +240,21 @@ async function deleteListing() {
 }
 
 const activeImage = ref(0);
+
+const galleryEntries = computed(() => {
+  const images = listing.value?.images ?? [];
+  const result: Array<{ key: string; image?: { id: string; url: string } }> = [];
+  images.forEach((image, index) => {
+    result.push({ key: image.id, image });
+    if ((index + 1) % 2 === 0) {
+      result.push({ key: `ad-${image.id}` });
+    }
+  });
+  if (images.length % 2 !== 0) {
+    result.push({ key: `ad-final-${images[images.length - 1]!.id}` });
+  }
+  return result;
+});
 
 const showReportForm = ref(false);
 const reportReason = ref('');
