@@ -15,13 +15,6 @@
       "when": 1785059325509,
       "tag": "0001_add_search_index",
       "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1785573535532,
-      "tag": "0002_stiff_ironclad",
-      "breakpoints": true
     }
   ]
 }
